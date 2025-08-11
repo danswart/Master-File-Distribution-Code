@@ -1,0 +1,1450 @@
+/* Current as of: 2025-08-11 */
+
+
+
+/*-- scss:defaults --*/
+
+/*  // Sass Variables
+/*  // https://quarto.org/docs/output-formats/html-themes.html#sass-variables
+
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lato');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat');
+@import url('https://fonts.googleapis.com/css2?family=Cabin');         /* swart */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab');   /* swart */
+@import url('https://fonts.googleapis.com/css2?family=Schoolbell');    /* swart */
+
+
+
+.table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+}
+
+.dataTables_wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.responsive-plot {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+figure {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+.callout-tip, .callout-caution, .callout-important, .callout-warning {
+  display: block;
+  padding: 1em;
+  margin: 1em 0;
+  border-style: solid;
+  border-width: 4px;
+  border-radius: 10px;
+/*  background-color: #f8f9fa;  background colors set below for each callout */
+}
+
+
+
+.callout-tip {
+  display: block;
+  padding: 1em;
+  margin: 1em 0;
+  border-style: solid;
+  border-width: 4px;
+  border-radius: 10px;
+  border-color: royalblue;
+  background-color: #e7f5ff;
+}
+
+
+.callout-caution {
+  display: block;
+  padding: 1em;
+  margin: 1em 0;
+  border-style: solid;
+  border-width: 4px;
+  border-radius: 10px;
+  border-color: red;
+  background-color: #fff5f5;
+}
+
+
+.callout-important {
+  display: block;
+  padding: 1em;
+  margin: 1em 0;
+  border-style: solid;
+  border-width: 4px;
+  border-radius: 10px;
+  border-color: #ff9800;
+  background-color: #fff3e0;
+}
+
+
+.callout-warning {
+  display: block;
+  padding: 1em;
+  margin: 1em 0;
+  border-style: solid;
+  border-width: 4px;
+  border-radius: 10px;
+  border-color: #8A2BE2;
+  background-color: #f3e5f5;
+}
+
+
+/* format html selectors */
+
+body {
+  font-size: 18px;
+  max-width: 100%;      /* Adjust the width as needed */
+  font-family: "Cabin", sans-serif;
+  color: black;
+}
+
+/* Alternative selector that's more specific */
+title {
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+
+h1 {
+  font-family: "Cabin", sans-serif;
+  padding: 10px;
+  color: darkgreen;
+}
+
+h2 {
+  font-family: "Cabin", sans-serif;
+  font-size: 24px;
+  color: darkred;
+}
+
+
+h3 {
+  font-family: "Cabin", sans-serif;
+  font-size: 22px;
+  color: darkred;
+  text-align: left;
+}
+
+
+h4 {
+  font-family: "Cabin", sans-serif;
+  font-size: 20px;
+  color: blue;
+}
+
+
+h5 {
+  font-family: "Cabin", sans-serif;
+  font-size: 20px;
+  color: black;
+}
+
+
+.main-container {
+  padding: 20px;
+}
+
+
+
+/* When using a caption-tag  */
+
+.caption {
+  caption-side: top;
+  text-align: center;
+  padding-bottom: 10px;
+  font-weight: 900;
+  font-size: 26;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+/* Format basic font size for all bookdown chapters
+/* Adjust the size as needed */
+
+
+/* Format for quarto book dedication*/
+
+.dedication {
+  text-align: center;
+  font-style: italic;
+  font-size: 1.2em;
+  margin-top: 20%;
+}
+
+
+/* Draw a red circle or red box around a character or a word in Rmarkdown */
+/* Example coding:
+/* <span class="red-circle"> &nbsp;&nbsp;Revenue</span>*/
+/* <span class="red-box">Revenue</span>*/
+/* <span class="red-circle">R&nbsp;</span>evenue*/
+/* <span class="red-box">R</span>evenue*/
+
+
+.red-circle {
+    position: relative;
+    display: inline-block;
+}
+
+.red-circle::before {
+    content: "";
+    position: absolute;
+    width: calc(100% + 20px); /* Increase width for more padding */
+    height: calc(100% + 16px); /* Increase height for more padding */
+    border: 2px solid red; /* Red border color */
+    border-radius: 50%; /* Create a circle */
+    top: -4px; /* Adjust top position for more padding */
+    left: -4px; /* Adjust left position for more padding */
+    background-color: transparent; /* No fill color */
+    z-index: -1; /* Ensure the circle is behind the text */
+}
+
+
+.red-box {
+    display: inline-block;
+    border: 2px solid red; /* Red border color */
+    padding: 4px; /* Adjust padding for more space around the text */
+    background-color: transparent; /* No fill color */
+}
+
+
+
+/* Formatting an Rmarkdown <blockquote> call */
+
+.my-quote {
+    border: 4px solid darkgreen;
+    background-color: #f8f8f8;
+    margin: 40px auto;
+    font-size: 16px;
+    text-align: left;
+    border-radius: 10px;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.quote-author {
+    text-align: right;
+    font-style: italic;
+    margin: 0;
+    padding: 0;
+}
+
+.quote-description {
+    text-align: right;
+    margin: 0;
+    padding: 0;
+}
+
+.my-box {
+    border: 2px solid #A9A9A9;
+    background-color: #f8f8f8;
+    margin: 40px auto;
+    font-size: 16px;
+    text-align: left;
+    border-radius: 10px;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+
+/* Formatting a Bookdown bs4_book quote box */
+
+.rmdtip {
+  border-width: 4px; /* Adjust this value as needed */
+  border-radius: 10px;
+  border-color: royalblue;
+}
+
+
+.rmdcaution {
+  border-width: 4px; /* Adjust this value as needed */
+  border-radius: 10px;
+  border-color: red;
+}
+
+.rmdimportant {
+  border-width: 4px; /* Adjust this value as needed */
+  border-radius: 10px;
+}
+
+.rmdwarning {
+  border-width: 4px; /* Adjust this value as needed */
+  border-color: #8A2BE2;
+  border-radius: 10px;
+}
+
+
+/* Formatting a Quarto and Rmarkdown callout boxes */
+
+.callout-tip {
+  border-width: 4px; /* Adjust this value as needed */
+  border-radius: 10px;
+  border-color: royalblue;
+}
+
+
+.callout-caution {
+  border-width: 4px; /* Adjust this value as needed */
+  border-radius: 10px;
+  border-color: red;
+}
+
+.callout-important {
+  border-width: 4px; /* Adjust this value as needed */
+  border-radius: 10px;
+}
+
+.callout-warning {
+  border-width: 4px; /* Adjust this value as needed */
+  border-color: #8A2BE2;
+  border-radius: 10px;
+}
+
+
+
+
+/* Formatting RAN-ONE ppt slides */
+
+/* Apply h2 styling to the entire slide content and 50px padding from top */
+
+.remark-slide-content {
+  font-size: 2em; /* Adjust the size as needed */
+  font-weight: bold;
+  padding-top: 50px;
+}
+
+
+/* Text */
+
+.al {
+  text-align: left;
+}
+
+.ac {
+  text-align: center;
+}
+
+.ar {
+  text-align: right;
+}
+
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center-text {
+  display: block;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.f-4 {
+  font-size: 4rem;
+}
+
+.ul{
+  text-decoration:
+  underline;
+
+}
+
+.dbl-underline{
+  border-bottom:
+  4px double;
+
+}
+
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center-text {
+  display: block;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+/* Background Colors */
+
+.bg-van {
+  background-color: #F5DEB3;
+}
+
+.bg-navajowhite {
+  background-color: #FFDEAD;
+}
+
+.bg-antiquewhite {
+  background-color: #FAEBD7;
+}
+
+.bg-bisque {
+  background-color: #FFE4C4;
+}
+
+.bg-moccasin {
+  background-color: #FFE4B5;
+}
+
+.bg-lightblue {
+  background-color: #ADD8E6;
+}
+
+.bg-lightskyblue {
+  background-color: #87CEFA;
+}
+
+.bg-lightsteelblue1 {
+  background-color: #CAE1FF;
+}
+
+.bg-blanchedalmond {
+  background-color: #FFEBCD;
+}
+
+.bg-wheat {
+  background-color: #F5DEB3;
+}
+
+.bg-black {
+  background-color: #000000;
+}
+
+.bg-gray {
+  background-color: #808080;
+}
+
+.bg-lightgray {
+  background-color: #D3D3D3;
+}
+
+.bg-darkgray {
+  background-color: #A9A9A9;
+}
+
+.bg-dimgray {
+  background-color: #696969;
+}
+
+.bg-grey {
+  background-color: #808080;
+}
+
+.bg-lightgrey {
+  background-color: #D3D3D3;
+}
+
+.bg-darkgrey {
+  background-color: #A9A9A9;
+}
+
+.bg-dimgrey {
+  background-color: #696969;
+}
+
+.bg-slategray {
+  background-color: #708090;
+}
+
+.bg-lightslategray {
+  background-color: #778899;
+}
+
+.bg-darkslategray {
+  background-color: #2F4F4F;
+}
+
+.bg-slategrey {
+  background-color: #708090;
+}
+
+.bg-lightslategrey {
+  background-color: #778899;
+}
+
+.bg-darkslategrey {
+  background-color: #2F4F4F;
+}
+
+.bg-blue {
+  background-color: #0000FF;
+}
+
+.bg-mediumblue {
+  background-color: #0000CD;
+}
+
+.bg-darkblue {
+  background-color: #00008B;
+}
+
+.bg-cadetblue {
+  background-color: #5F9EA0;
+}
+
+.bg-slateblue {
+  background-color: #6A5ACD;
+}
+
+.bg-mediumslateblue {
+  background-color: #7B68EE;
+}
+
+.bg-darkslateblue {
+  background-color: #483D8B;
+}
+
+.bg-skyblue {
+  background-color: #87CEEB;
+}
+
+.bg-powderblue {
+  background-color: #B0E0E6;
+}
+
+.bg-midnightblue {
+  background-color: #191970;
+}
+
+.bg-navy {
+  background-color: #000080;
+}
+
+.bg-brown {
+  background-color: #A52A2A;
+}
+
+.bg-sandybrown {
+  background-color: #F4A460;
+}
+
+.bg-saddlebrown {
+  background-color: #8B4513;
+}
+
+.bg-peru {
+  background-color: #CD853F;
+}
+
+.bg-burlywood {
+  background-color: #DEB887;
+}
+
+.bg-chocolate {
+  background-color: #D2691E;
+}
+
+.bg-sienna {
+  background-color: #A0522D;
+}
+
+.bg-tan {
+  background-color: #D2B48C;
+}
+
+.bg-coral {
+  background-color: #FF7F50;
+}
+
+.bg-cyan {
+  background-color: #00FFFF;
+}
+
+.bg-darkcyan {
+  background-color: #008B8B;
+}
+
+.bg-darkgoldenrod {
+  background-color: #B8860B;
+}
+
+.bg-darkkhaki {
+  background-color: #BDB76B;
+}
+
+.bg-darkmagenta {
+  background-color: #8B008B;
+}
+
+.bg-darkorange {
+  background-color: #FF8C00;
+}
+
+.bg-darkorchid {
+  background-color: #9932CC;
+}
+
+.bg-darkred {
+  background-color: #8B0000;
+}
+
+.bg-darksalmon {
+  background-color: #E9967A;
+}
+
+.bg-darkviolet {
+  background-color: #9400D3;
+}
+
+.bg-deeppink {
+  background-color: #FF1493;
+}
+
+.bg-gold {
+  background-color: #FFD700;
+}
+
+.bg-goldenrod {
+  background-color: #DAA520;
+}
+
+.bg-green {
+  background-color: #008000;
+}
+
+.bg-lightgreen {
+  background-color: #90EE90;
+}
+
+.bg-darkgreen {
+  background-color: #006400;
+}
+
+.bg-forestgreen {
+  background-color: #228B22;
+}
+
+.bg-palegreen {
+  background-color: #98FB98;
+}
+
+.bg-limegreen {
+  background-color: #32CD32;
+}
+
+.bg-yellowgreen {
+  background-color: #9ACD32;
+}
+
+.bg-lawngreen {
+  background-color: #7CFC00;
+}
+
+.bg-olivedrab {
+  background-color: #6B8E23;
+}
+
+.bg-darkolivegreen {
+  background-color: #556B2F;
+}
+
+.bg-springgreen {
+  background-color: #00FF7F;
+}
+
+.bg-mediumspringgreen {
+  background-color: #00FA9A;
+}
+
+.bg-seagreen {
+  background-color: #2E8B57;
+}
+
+.bg-lightseagreen {
+  background-color: #20B2AA;
+}
+
+.bg-mediumseagreen {
+  background-color: #3CB371;
+}
+
+.bg-darkseagreen {
+  background-color: #8FBC8B;
+}
+
+.bg-hotpink {
+  background-color: #FF69B4;
+}
+
+.bg-indianred {
+  background-color: #CD5C5C;
+}
+
+.bg-khaki {
+  background-color: #F0E68C;
+}
+
+.bg-lavender {
+  background-color: #E6E6FA;
+}
+
+.bg-lavenderblush {
+  background-color: #FFF0F5;
+}
+
+.bg-lightcyan {
+  background-color: #E0FFFF;
+}
+
+.bg-lightgoldenrodyellow {
+  background-color: #FAFAD2;
+}
+
+.bg-lightpink {
+  background-color: #FFB6C1;
+}
+
+.bg-lightsalmon {
+  background-color: #FFA07A;
+}
+
+.bg-lightyellow {
+  background-color: #FFFFE0;
+}
+
+.bg-magenta {
+  background-color: #FF00FF;
+}
+
+.bg-maroon {
+  background-color: #800000;
+}
+
+.bg-mediumaquamarine {
+  background-color: #66CDAA;
+}
+
+.bg-mediumorchid {
+  background-color: #BA55D3;
+}
+
+.bg-mediumpurple {
+  background-color: #9370DB;
+}
+
+.bg-mediumturquoise {
+  background-color: #48D1CC;
+}
+
+.bg-mediumvioletred {
+  background-color: #C71585;
+}
+
+.bg-darkturquoise {
+  background-color: #00CED1;
+}
+
+.bg-orangered {
+  background-color: #FF4500;
+}
+
+.bg-palegoldenrod {
+  background-color: #EEE8AA;
+}
+
+.bg-paleturquoise {
+  background-color: #AFEEEE;
+}
+
+.bg-palevioletred {
+  background-color: #DB7093;
+}
+
+.bg-peachpuff {
+  background-color: #FFDAB9;
+}
+
+.bg-pink {
+  background-color: #FFC0CB;
+}
+
+.bg-plum {
+  background-color: #DDA0DD;
+}
+
+.bg-purple {
+  background-color: #800080;
+}
+
+.bg-orchid {
+  background-color: #DA70D6;
+}
+
+.bg-red {
+  background-color: #FF0000;
+}
+
+.bg-salmon {
+  background-color: #FA8072;
+}
+
+.bg-thistle {
+  background-color: #D8BFD8;
+}
+
+.bg-tomato {
+  background-color: #FF6347;
+}
+
+.bg-violet {
+  background-color: #EE82EE;
+}
+
+.bg-blueviolet {
+  background-color: #8A2BE2;
+}
+
+.bg-greenyellow {
+  background-color: #ADFF2F;
+}
+
+.bg-whitesmoke {
+  background-color: #F5F5F5;
+}
+
+.bg-ivory {
+  background-color: #FFFFF0;
+}
+
+.bg-white {
+  background-color: #FFFFFF;
+}
+
+.bg-aliceblue {
+  background-color: #F0F8FF;
+}
+
+.bg-azure {
+  background-color: #F0FFFF;
+}
+
+.bg-floralwhite {
+  background-color: #FFFAF0;
+}
+
+.bg-ghostwhite {
+  background-color: #F8F8FF;
+}
+
+.bg-honeydew {
+  background-color: #F0FFF0;
+}
+
+.bg-linen {
+  background-color: #FAF0E6;
+}
+
+.bg-mintcream {
+  background-color: #F5FFFA;
+}
+
+.bg-gainsboro {
+  background-color: #DCDCDC;
+}
+
+.bg-snow {
+  background-color: #FFFAFA;
+}
+
+.bg-seashell {
+  background-color: #FFF5EE;
+}
+
+.bg-lemonchiffon {
+  background-color: #FFFACD;
+}
+
+.bg-papayawhip {
+  background-color: #FFEFD5;
+}
+
+.bg-cornsilk {
+  background-color: #FFF8DC;
+}
+
+.bg-beige {
+  background-color: #F5F5DC;
+}
+
+.bg-mistyrose {
+  background-color: #FFE4E1;
+}
+
+.bg-antiquewhite {
+  background-color: #FAEBD7;
+}
+
+.bg-bisque {
+  background-color: #FFE4C4;
+}
+
+.bg-moccasin {
+  background-color: #FFE4B5;
+}
+
+.bg-navajowhite {
+  background-color: #FFDEAD;
+}
+
+.bg-lightblue {
+  background-color: #ADD8E6;
+}
+
+.bg-cornflowerblue {
+  background-color: #6495ED;
+}
+
+.bg-lightskyblue {
+  background-color: #87CEFA;
+}
+
+.bg-deepskyblue {
+  background-color: #00BFFF;
+}
+
+.bg-dodgerblue {
+  background-color: #1E90FF;
+}
+
+.bg-steelblue {
+  background-color: #4682B4;
+}
+
+.bg-lightsteelblue {
+  background-color: #B0C4DE;
+}
+
+.bg-royalblue {
+  background-color: #4169E1;
+}
+
+.bg-lightcoral {
+  background-color: #F08080;
+}
+
+.bg-firebrick {
+  background-color: #B22222;
+}
+
+.bg-chartreuse {
+  background-color: #7FFF00;
+}
+
+.bg-orange {
+  background-color: #FFA500;
+}
+
+.bg-turquoise {
+  background-color: #40E0D0;
+}
+
+.bg-aquamarine {
+  background-color: #7FFFD4;
+}
+
+.bg-yellow {
+  background-color: #FFFF00;
+}
+
+
+/* Colors */
+
+/* Color names followed by their corresponding hex codes*/
+
+
+.white {
+  color: #FFFFFF;
+}
+
+
+.whitesmoke {
+  color: #F5F5F5;
+}
+
+.ivory {
+  color: #FFFFF0;
+}
+
+.aliceblue {
+  color: #F0F8FF;
+}
+
+.azure {
+  color: #F0FFFF;
+}
+
+.floralwhite {
+  color: #FFFAF0;
+}
+
+.gainsboro {
+  color: #DCDCDC;
+}
+
+.ghostwhite {
+  color: #F8F8FF;
+}
+
+.honeydew {
+  color: #F0FFF0;
+}
+
+.linen {
+  color: #FAF0E6;
+}
+
+.mintcream {
+  color: #F5FFFA;
+}
+
+.snow {
+  color: #FFFAFA;
+}
+
+.seashell {
+  color: #FFF5EE;
+}
+.lemonchiffon {
+  color: #FFFACD;
+}
+
+.papayawhip {
+  color: #FFEFD5;
+}
+
+.cornsilk {
+  color: #FFF8DC;
+}
+
+.beige {
+  color: #F5F5DC;
+}
+
+.mistyrose {
+  color: #FFE4E1;
+}
+
+.van{
+   color: #F5DEB3;
+}
+
+.navajow{
+  color: #FFDEAD;
+}
+
+.antiquew{
+  color: #FAEBD7;
+}
+
+.bisque{
+  color: #FFE4C4;
+}
+
+.moccasin{
+  color: #FFE4B5;
+}
+
+.blanchedalmond {
+  color: #FFEBCD;
+}
+
+.wheat {
+  color: #F5DEB3;
+}
+
+.black {
+  color: #000000;
+}
+
+.gray {
+  color: #808080;
+}
+
+.lightgray {
+  color: #D3D3D3;
+}
+
+.darkgray {
+  color: #A9A9A9;
+}
+
+.dimgray {
+  color: #696969;
+}
+
+.grey {
+  color: #808080;
+}
+
+.lightgrey {
+  color: #D3D3D3;
+}
+
+.darkgrey {
+  color: #A9A9A9;
+}
+
+.dimgrey {
+  color: #696969;
+}
+
+.slategray {
+  color: #708090;
+}
+
+.lightslategray {
+  color: #778899;
+}
+
+.darkslategray {
+  color: #2F4F4F;
+}
+
+.slategrey {
+  color: #708090;
+}
+
+.lightslategrey {
+  color: #778899;
+}
+
+.darkslategrey {
+  color: #2F4F4F;
+}
+
+.blue {
+  color: #0000FF;
+}
+
+.mediumblue {
+  color: #0000CD;
+}
+
+.darkblue {
+  color: #00008B;
+}
+
+.cadetblue {
+  color: #5F9EA0;
+}
+
+.slateblue {
+  color: #6A5ACD;
+}
+
+.mediumslateblue {
+  color: #7B68EE;
+}
+
+.darkslateblue {
+  color: #483D8B;
+}
+
+.skyblue {
+  color: #87CEEB;
+}
+
+.powderblue {
+  color: #B0E0E6;
+}
+
+.midnightblue {
+  color: #191970;
+}
+
+.navy {
+  color: #000080;
+}
+
+.brown {
+  color: #A52A2A;
+}
+
+.sandybrown {
+  color: #F4A460;
+}
+
+.saddlebrown {
+  color: #8B4513;
+}
+
+.peru {
+  color: #CD853F;
+}
+
+.burlywood {
+  color: #DEB887;
+}
+
+.chocolate {
+  color: #D2691E;
+}
+
+.sienna {
+  color: #A0522D;
+}
+
+.tan {
+  color: #D2B48C;
+}
+
+.coral {
+  color: #FF7F50;
+}
+
+
+
+/* Tachyons Colors Abbreviations, styling outside of Tachyons requires full color name or hex code */
+
+.lc{
+  color: lightcoral;
+  font-weight: bold;
+}
+
+.fireb{
+  color: firebrick;
+}
+
+.tq{
+  color: turquoise;
+}
+
+.aq{
+  color: aquamarine;
+}
+
+.char{
+  color: #7FFF00;
+}
+
+.o{
+  color: #FF5733;
+}
+
+.y{
+  color: yellow;
+}
+
+.cfb{
+  color: cornflowerblue;
+}
+
+.dsb{
+  color: deepskyblue;
+}
+
+.dodger{
+  color: dodgerblue;
+}
+
+.sb{
+  color: steelblue;
+}
+
+.rb{
+  color: royalblue;
+}
+
+
+
+/* Alignment Margins*/
+
+.top-3{
+  top: 3rem;
+}
+
+.top-4{
+  top: 4rem;
+}
+
+.top-5{
+  top: 5rem;
+}
+
+.top-6{
+  top: 6rem;
+}
+
+.top-7{
+  top: 7rem;
+}
+
+
+/* Styles for quadrant layouts */
+
+.quad-container {
+  display: flex;
+  height: 80%;
+  flex-wrap: wrap; /* Wrap quadrants to next row if needed */
+}
+
+.quad {
+  flex: 1;
+  display: flex;
+  justify-content: top;
+  align-items: top;
+  border: 3px solid black; /* Border around the entire quadrant with white color */
+  box-sizing: border-box;
+  padding: 1em;
+  overflow: hidden; /* Clip content inside quadrant */
+  min-width: 50%; /* Minimum width for each quadrant */
+  max-height: 50%; /* Maximum height for each quadrant */
+}
+
+
+/* Custom styles for each quadrant */
+
+.top-left {
+  background-color: white;
+  color: black;
+}
+
+.top-right {
+  background-color: white;
+  color: black;
+}
+
+.bottom-left {
+  background-color: white;
+  color: black;
+}
+
+.bottom-right {
+  background-color: white;
+  color: black;
+}
+
+/* Adjust text overflow */
+
+.quad-content {
+  max-height: 100%; /* Ensure text doesn't exceed quadrant height */
+  overflow: auto; /* Add scrollbars if content exceeds quadrant */
+}
+
+
+.split-slide{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.quad1, .quad2, .quad3, .quad4{
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.quad2, .quad3{
+  border-right: 2px solid black;
+}
+
+.quad1, .quad4{
+  border-left: 2px solid black;
+}
+
+/* vertical line in the middle */
+
+.split-slide .quad1:not(:first-child){
+  border-left: 3px solid black;
+}
+
+.split-slide .quad4:not(:first-child){
+  border-left: 3px solid black;
+}
+
+/* horizontal line in center */
+
+.split-slide .quad3:not(:first-child){
+  border-top: 3px solid black;
+}
+
+.split-slide .quad4:not(:first-child){
+  border-top: 3px solid black;
+}
+
+/* Resizing Images */
+
+.image-container-64-center {
+  max-width: 600px; /* Adjust the maximum width as needed */
+  max-height: 400px; /* Adjust the maximum height as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resize-image-65 {
+  max-width: 600px; /* Adjust the maximum width as needed */
+  max-height: 500px; /* Adjust the maximum height as needed */
+}
+
+.resize-image-63 {
+  max-width: 600px; /* Adjust the maximum width as needed */
+  max-height: 300px; /* Adjust the maximum height as needed */
+}
+
+.resize-image-64 {
+  max-width: 600px; /* Adjust the maximum width as needed */
+  max-height: 400px; /* Adjust the maximum height as needed */
+}
+
+.resize-image-55 {
+  max-width: 500px; /* Adjust the maximum width as needed */
+  max-height: 500px; /* Adjust the maximum height as needed */
+}
+
+.resize-image-54 {
+  max-width: 500px; /* Adjust the maximum width as needed */
+  max-height: 400px; /* Adjust the maximum height as needed */
+}
+
+.resize-image-53 {
+  max-width: 500px; /* Adjust the maximum width as needed */
+  max-height: 300px; /* Adjust the maximum height as needed */
+}
+
+.resize-image-44 {
+  max-width: 400px; /* Adjust the maximum width as needed */
+  max-height: 400px; /* Adjust the maximum height as needed */
+}
+
+.resize-image-43 {
+  max-width: 400px; /* Adjust the maximum width as needed */
+  max-height: 300px; /* Adjust the maximum height as needed */
+}
+

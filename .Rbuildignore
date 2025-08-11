@@ -1,0 +1,16 @@
+# Current as of: 2025-08-11
+^.*\.Rproj$      # RStudio project files
+^\.Rproj\.user$  # RStudio user-specific settings
+^LICENSE\.md$    # LICENSE.md (keeping only LICENSE for CRAN)
+^README\.Rmd$    # Source file for README
+^\.github$       # GitHub Actions
+^_pkgdown\.yml$  # pkgdown config
+^docs$           # pkgdown site
+^data-raw$       # Raw data prep scripts
+^\.gitignore$    # Git files
+^\.gitattributes$
+^cran-comments\.md$  # CRAN submission notes
+^revdep$         # Reverse dependency checks
+^\.Rhistory$     # R history
+^\.RData$        # R data files
+

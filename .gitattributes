@@ -1,0 +1,66 @@
+# Current as of: 2025-08-11
+
+# 1. Git LFS (Large File Storage)
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.avi filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+
+# 2. GitHub Language Statistics (Linguist)
+# Mark vendored libraries (in libs/ folder)
+libs/**/*.css linguist-vendored=true
+libs/**/*.js linguist-vendored=true
+# Ensure R files are detected correctly
+*.R linguist-language=R
+*.Rmd linguist-language=RMarkdown
+*.qmd linguist-language=RMarkdown
+# Mark generated files
+*.html linguist-generated=true
+*_files/ linguist-generated=true
+docs/* linguist-documentation=true
+
+# 3. Line Ending Normalization
+# Force Unix line endings for code files
+*.R text eol=lf
+*.Rmd text eol=lf
+*.qmd text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+# Force Windows line endings for Windows-specific files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 4. Diff Behavior
+# Binary files - don't try to diff these
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.RData binary
+*.rds binary
+*.rda binary
+# Text files - ensure these are diffed as text
+*.csv text
+*.tsv text
+*.txt text
+
+# 5. Merge Strategies
+# Keep our version during merge conflicts
+DESCRIPTION merge=ours
+# Union merge for NAMESPACE (combine both versions)
+NAMESPACE merge=union
+
+# 6. Export Control (for releases/archives)
+# Don't include these in exported archives
+.gitignore export-ignore
+.gitattributes export-ignore
+.Rbuildignore export-ignore
+.github/ export-ignore
+tests/ export-ignore
+data-raw/ export-ignore
+README.Rmd export-ignore
+^.*\.Rproj$ export-ignore
+
