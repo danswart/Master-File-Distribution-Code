@@ -593,9 +593,11 @@ distribute_to_specific(c("1-Projects in Process",
                          "Master Data Bank",
                          "Master Data Cleaning Station",
                          "Master Font Loading",
+                         "Master GIF Files",
                          "Master GIT Files",
                          "Master HTML Bank",
                          "Master Image Bank",
+                         "Master Video Bank",
                          "McElreath Causal Salad DAGs",
                          "McElreath Rethinking with Tidyverse",
                          "Palettes",
@@ -617,7 +619,8 @@ distribute_to_specific(c("1-Projects in Process",
                          "System Analysis Dashboard",
                          "TidyCensus - SCUC",
                          "TidyCensus - Sowell",
-                         "TX K-12 Legislation Analysis"
+                         "TX K-12 Legislation Analysis",
+                         "yuzaR Tutorials"
                          )
                        )
 
