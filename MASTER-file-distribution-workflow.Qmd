@@ -360,6 +360,7 @@ This workflow distributes common project files from the master directory to sele
 
 knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE)
 
+
 ```
 
 
@@ -585,10 +586,11 @@ distribute_to_specific(c("1-Projects in Process",
                          "Exploring DAGs",
                          "Exploring Diffs in Means",
                          "Exploring Diffs in Variance in Groups",
+                         "Exploring US Census Data",
                          "FINAL Plots & Scripts",
                          "Honest Evaluation of Variables That Co-Vary",
                          "Links to Published Works",
-                         "Master Project Files for Distribution",
+                         "Master Files for Every Folder",
                          "Master CSS Files",
                          "Master Data Bank",
                          "Master Data Cleaning Station",
@@ -612,14 +614,21 @@ distribute_to_specific(c("1-Projects in Process",
                          "SCUC Data Analysis DS Article",
                          "SCUC Data Anaylsis",
                          "Searching pdf Files for Causal Terms",
+                         "Maps with R - Sever",
+                         "price-hikes-discounts-calculator",
+                         "Quarto Test Blog",
                          "Shiny Modules",
                          "shinyapps.io Deployments",
                          "Standalone Chart Code",
-                         "Standardize Project Files",
+                         "Standardized Project Files",
                          "System Analysis Dashboard",
+                         "TidyCensus - Learning",
                          "TidyCensus - SCUC",
                          "TidyCensus - Sowell",
                          "TX K-12 Legislation Analysis",
+                         "xaringanmediacalls",
+                         "xaringanskeletonbgblack",
+                         "xaringanskeletonbgdarkslategray",
                          "yuzaR Tutorials"
                          )
                        )
@@ -627,6 +636,122 @@ distribute_to_specific(c("1-Projects in Process",
 
 ## To exclude the main R Working Directory, use:
 # distribute_to_specific(c("Project1", "Project2"), include_main_dir = FALSE)
+
+```
+
+
+
+
+## Uncomment to Distribute to a SINGLE Project Only
+
+***Enter folder name in bottom line of code chunk***
+
+```{r distribute-specific}
+
+# Setup
+knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE)
+
+
+# Copy to selected projects
+distribute_to_specific <- function(project_names, 
+                                 source_dir = "~/R Working Directory",
+                                 files_to_copy = c(".gitattributes",
+                                                   ".gitignore",
+                                                   ".Rbuildignore",
+                                                   "swart.css",
+                                                   "xaringan-themer.css",
+                                                   "header.html", 
+                                                   "r-colors.css", 
+                                                   "reference-backlinks.js", 
+                                                   "tachyons.min.css"),
+                                 include_main_dir = TRUE) {
+  
+  # Expand destination directory path
+  source_dir <- path.expand(source_dir)
+  
+  # Get current directory where source files are located
+  source_files_dir <- getwd()
+  
+  # First check which source files exist
+  cat("Checking source files in:", source_files_dir, "\n\n")
+  missing_files <- c()
+  available_files <- c()
+  hidden_file_count <- 0
+  
+  for (file in files_to_copy) {
+    if (file.exists(file.path(source_files_dir, file))) {
+      available_files <- c(available_files, file)
+      if (substr(file, 1, 1) == ".") {
+        hidden_file_count <- hidden_file_count + 1
+      }
+    } else {
+      missing_files <- c(missing_files, file)
+    }
+  }
+  
+  if (length(missing_files) > 0) {
+    cat("WARNING: These source files not found:\n")
+    cat(paste("  -", missing_files), sep = "\n")
+    cat("\n")
+  }
+  
+  if (length(available_files) == 0) {
+    stop("No source files found to copy!")
+  }
+  
+  cat("Available files to copy:", length(available_files), 
+      "files (including", hidden_file_count, "hidden files)\n")
+  cat(paste("  +", available_files), sep = "\n")
+  cat("\n")
+  
+  # Add main R Working Directory if requested
+  if (include_main_dir) {
+    project_names <- c("R Working Directory", project_names)
+  }
+  
+  # Process each project
+  for (project in project_names) {
+    if (project == "R Working Directory") {
+      project_path <- source_dir
+    } else {
+      project_path <- file.path(source_dir, project)
+    }
+    
+    if (!dir.exists(project_path)) {
+      cat("✗ Skipping:", project, "(directory not found)\n")
+      next
+    }
+    
+    # Skip if it's a hidden directory
+    if (grepl("/\\.", project_path)) {
+      cat("✗ Skipping:", project, "(hidden directory - skipped for safety)\n")
+      next
+    }
+    
+    cat("→ Updating:", project, "\n")
+    
+    copied_count <- 0
+    for (file in available_files) {
+      source_file <- file.path(source_files_dir, file)
+      dest_file <- file.path(project_path, file)
+      
+      result <- file.copy(source_file, dest_file, overwrite = TRUE)
+      if (result) {
+        copied_count <- copied_count + 1
+        cat("  ✓", file, "\n")
+      } else {
+        cat("  ✗ Failed to copy:", file, "\n")
+      }
+    }
+    
+    cat("  Total:", copied_count, "files copied\n\n")
+  }
+}
+
+
+
+## To exclude the main R Working Directory, use:
+distribute_to_specific(c("TidyCensus - Learning"), include_main_dir = FALSE)
 
 ```
 
