@@ -12,13 +12,14 @@ format: html
 1. **Place all source files** in your master directory: `/Users/D/R Working Directory/Master File Distribution Code`
 
 
-2. **Add date comments to source files** (optional but recommended):
+2. **Add date comments to source files** (run this function from the Utility section below):
+
    ```r
    # This adds "Current as of: 2025-08-11" to the top of each file
    add_date_to_files()
    
    # Or use a custom date:
-   add_date_to_files(date_string = "2025-08-15")
+   add_date_to_files(date_string = "2025-08-16")
    ```
 
 
@@ -188,7 +189,7 @@ list_project_directories()
 ```
 
 
-### Uncomment to add date comments to source files (ONLY IF NEEDED)
+### Uncomment and add date comments to source files (recommended)
 
 ```{r add-date-comments}
 
@@ -198,30 +199,30 @@ list_project_directories()
 #                                                    ".Rbuildignore",
 #                                                    "swart.css",
 #                                                    "xaringan-themer.css",
-#                                                    "header.html", 
-#                                                    "r-colors.css", 
-#                                                    "reference-backlinks.js", 
+#                                                    "header.html",
+#                                                    "r-colors.css",
+#                                                    "reference-backlinks.js",
 #                                                    "tachyons.min.css"),
-#                               date_string = "2025-08-11",
+#                               date_string = "2025-08-16",
 #                               source_dir = getwd()) {
-#   
+# 
 #   cat("Adding date comments to source files...\n\n")
-#   
+# 
 #   for (file in files_to_update) {
 #     file_path <- file.path(source_dir, file)
-#     
+# 
 #     if (!file.exists(file_path)) {
 #       cat("✗ Skipping:", file, "(not found)\n")
 #       next
 #     }
-#     
+# 
 #     # Read the current content
 #     content <- readLines(file_path, warn = FALSE)
-#     
+# 
 #     # Determine comment syntax based on file extension
 #     ext <- tolower(tools::file_ext(file))
 #     file_base <- basename(file)
-#     
+# 
 #     # Create the appropriate comment
 #     if (file_base %in% c(".gitattributes", ".gitignore", ".Rbuildignore")) {
 #       # These files use # for comments
@@ -239,7 +240,7 @@ list_project_directories()
 #       cat("✗ Unknown file type:", file, "(skipping)\n")
 #       next
 #     }
-#     
+# 
 #     # Check if comment already exists
 #     if (length(content) > 0 && grepl("Current as of:", content[1], fixed = TRUE)) {
 #       # Update existing date
@@ -250,21 +251,21 @@ list_project_directories()
 #       content <- c(comment_line, content)
 #       cat("✓ Added date to:", file, "\n")
 #     }
-#     
-#     
-#     # # Write back to file
-#     # writeLines(content, file_path)
+# 
+# 
+#     # Write back to file
+#     writeLines(content, file_path)
 #   }
-#   
+# 
 #   cat("\nDone! Date comments added/updated.\n")
 #   cat("You can now run distribute functions to copy these dated files.\n")
 # }
 # 
-# # Add or update date comments in all source files
+# # Add '2025-08-16' or update date comments in all source files
 # add_date_to_files()
 # 
-# # You can also specify a custom date:
-# # add_date_to_files(date_string = "2025-08-15")
+# # # You can also specify a custom date:
+# # add_date_to_files(date_string = "2025-08-16")
 
 ```
 
@@ -368,95 +369,81 @@ knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE)
 
 ## Uncomment to Distribute to ALL Project Folders
 
-```{r distribute-all}
+```{r distribute-to-all}
 
-# distribute_project_files <- function(source_dir = "~/R Working Directory", 
-#                                    files_to_copy = c(".gitattributes",
-#                                                      ".gitignore",
-#                                                      ".Rbuildignore",
-#                                                      "swart.css",
-#                                                      "xaringan-themer.css",
-#                                                      "header.html", 
-#                                                      "r-colors.css", 
-#                                                      "reference-backlinks.js", 
-#                                                      "tachyons.min.css")) {
-#   
+# distribute_project_files <- function(source_dir = "~/R Working Directory",
+#                                      files_to_copy = c(".gitattributes",
+#                                                        ".gitignore",
+#                                                        ".Rbuildignore",
+#                                                        "swart.css",
+#                                                        "xaringan-themer.css",
+#                                                        "header.html",
+#                                                        "r-colors.css",
+#                                                        "reference-backlinks.js",
+#                                                        "tachyons.min.css"),
+#                                      exclude_folder = "Master File Distribution Code") {
+# 
 #   # Expand the path for destination directories
 #   source_dir <- path.expand(source_dir)
-#   
+# 
 #   # Get current directory where source files are located
 #   source_files_dir <- getwd()
-#   
-#   # Check if source files exist in the current directory
-#   missing_files <- c()
-#   available_files <- c()
-#   hidden_file_count <- 0
-#   
-#   for (file in files_to_copy) {
-#     if (file.exists(file.path(source_files_dir, file))) {
-#       available_files <- c(available_files, file)
-#       if (substr(file, 1, 1) == ".") {
-#         hidden_file_count <- hidden_file_count + 1
-#       }
-#     } else {
-#       missing_files <- c(missing_files, file)
-#     }
-#   }
-#   
+# 
+#   # Check which files exist
+#   available_files <- files_to_copy[file.exists(file.path(source_files_dir, files_to_copy))]
+#   missing_files <- setdiff(files_to_copy, available_files)
+# 
 #   if (length(missing_files) > 0) {
 #     cat("WARNING: These source files not found in", source_files_dir, ":\n")
 #     cat(paste("  -", missing_files), sep = "\n")
 #     cat("\nContinuing with available files...\n")
 #   }
-#   
-#   cat("\nFound", length(available_files), "files to copy (including", 
-#       hidden_file_count, "hidden files)\n\n")
-#   
-#   # Get all subdirectories (excluding hidden ones for safety)
+# 
+#   cat("\nFound", length(available_files), "files to copy\n\n")
+# 
+#   # Get all subdirectories (non-recursive, excluding hidden)
 #   subdirs <- list.dirs(source_dir, full.names = TRUE, recursive = FALSE)
-#   subdirs <- subdirs[!grepl("/\\.", subdirs)]  # EXCLUDE hidden directories
-#   
-#   # Add the main R Working Directory itself to the list
-#   all_destinations <- c(source_dir, subdirs)
-#   
+#   subdirs <- subdirs[!grepl("/\\.", subdirs)]  # Exclude hidden directories
+# 
+#   # Exclude the source folder itself and the special folder
+#   all_destinations <- setdiff(subdirs, c(source_dir, file.path(source_dir, exclude_folder)))
+# 
 #   # Counter for feedback
-#   copied_count <- 0
 #   total_files_copied <- 0
-#   
-#   # Copy files to main directory and each subdirectory
+# 
+#   # Copy files
 #   for (dest_dir in all_destinations) {
-#     if (dest_dir == source_dir) {
-#       cat("Copying to: R Working Directory (main)")
-#     } else {
-#       cat("Copying to:", basename(dest_dir))
-#     }
-#     
+#     cat("Copying to:", basename(dest_dir), "\n")
 #     files_copied_to_dir <- 0
+# 
 #     for (file in available_files) {
 #       source_file <- file.path(source_files_dir, file)
 #       dest_file <- file.path(dest_dir, file)
-#       
-#       # Copy and overwrite
+# 
 #       if (file.copy(source_file, dest_file, overwrite = TRUE)) {
 #         files_copied_to_dir <- files_copied_to_dir + 1
 #         total_files_copied <- total_files_copied + 1
 #       }
 #     }
-#     
-#     cat(" - ", files_copied_to_dir, "files copied\n")
-#     copied_count <- copied_count + 1
+# 
+#     cat(" - ", files_copied_to_dir, "files copied\n\n")
 #   }
-#   
-#   cat("\nDone! Copied", total_files_copied, "files to", copied_count, "directories.\n")
-#   cat("(Hidden directories were excluded for safety)\n")
-#   
-#   # Return list of directories updated
+# 
+#   cat("Done! Total files copied:", total_files_copied, "\n")
+#   cat("Excluded folder:", exclude_folder, "\n")
+# 
 #   invisible(all_destinations)
 # }
 # 
-# 
-## Run it - uncomment the line below to execute
+# # Run it
 # distribute_project_files()
+
+```
+
+
+
+```{r}
+
 
 ```
 
