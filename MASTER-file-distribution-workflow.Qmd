@@ -189,7 +189,7 @@ list_project_directories()
 ```
 
 
-### Uncomment and add date comments to source files (recommended)
+### Uncomment and update the date comment at top of each file (recommended)
 
 ```{r add-date-comments}
 
@@ -261,11 +261,10 @@ list_project_directories()
 #   cat("You can now run distribute functions to copy these dated files.\n")
 # }
 # 
-# # Add '2025-08-16' or update date comments in all source files
-# add_date_to_files()
 # 
-# # # You can also specify a custom date:
-# # add_date_to_files(date_string = "2025-08-16")
+# 
+# # Specify the new date:
+# add_date_to_files(date_string = "2025-08-17")
 
 ```
 
@@ -367,76 +366,76 @@ knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE)
 
 
 
-## Uncomment to Distribute to ALL Project Folders
+## Uncomment to Distribute to ALL Project Folders, Including R Working Directory/
 
 ```{r distribute-to-all}
 
-# distribute_project_files <- function(source_dir = "~/R Working Directory",
-#                                      files_to_copy = c(".gitattributes",
-#                                                        ".gitignore",
-#                                                        ".Rbuildignore",
-#                                                        "swart.css",
-#                                                        "xaringan-themer.css",
-#                                                        "header.html",
-#                                                        "r-colors.css",
-#                                                        "reference-backlinks.js",
-#                                                        "tachyons.min.css"),
-#                                      exclude_folder = "Master File Distribution Code") {
-# 
-#   # Expand the path for destination directories
-#   source_dir <- path.expand(source_dir)
-# 
-#   # Get current directory where source files are located
-#   source_files_dir <- getwd()
-# 
-#   # Check which files exist
-#   available_files <- files_to_copy[file.exists(file.path(source_files_dir, files_to_copy))]
-#   missing_files <- setdiff(files_to_copy, available_files)
-# 
-#   if (length(missing_files) > 0) {
-#     cat("WARNING: These source files not found in", source_files_dir, ":\n")
-#     cat(paste("  -", missing_files), sep = "\n")
-#     cat("\nContinuing with available files...\n")
-#   }
-# 
-#   cat("\nFound", length(available_files), "files to copy\n\n")
-# 
-#   # Get all subdirectories (non-recursive, excluding hidden)
-#   subdirs <- list.dirs(source_dir, full.names = TRUE, recursive = FALSE)
-#   subdirs <- subdirs[!grepl("/\\.", subdirs)]  # Exclude hidden directories
-# 
-#   # Exclude the source folder itself and the special folder
-#   all_destinations <- setdiff(subdirs, c(source_dir, file.path(source_dir, exclude_folder)))
-# 
-#   # Counter for feedback
-#   total_files_copied <- 0
-# 
-#   # Copy files
-#   for (dest_dir in all_destinations) {
-#     cat("Copying to:", basename(dest_dir), "\n")
-#     files_copied_to_dir <- 0
-# 
-#     for (file in available_files) {
-#       source_file <- file.path(source_files_dir, file)
-#       dest_file <- file.path(dest_dir, file)
-# 
-#       if (file.copy(source_file, dest_file, overwrite = TRUE)) {
-#         files_copied_to_dir <- files_copied_to_dir + 1
-#         total_files_copied <- total_files_copied + 1
-#       }
-#     }
-# 
-#     cat(" - ", files_copied_to_dir, "files copied\n\n")
-#   }
-# 
-#   cat("Done! Total files copied:", total_files_copied, "\n")
-#   cat("Excluded folder:", exclude_folder, "\n")
-# 
-#   invisible(all_destinations)
-# }
-# 
-# # Run it
-# distribute_project_files()
+distribute_project_files <- function(source_dir = "~/R Working Directory",
+                                     files_to_copy = c(".gitattributes",
+                                                       ".gitignore",
+                                                       ".Rbuildignore",
+                                                       "swart.css",
+                                                       "xaringan-themer.css",
+                                                       "header.html",
+                                                       "r-colors.css",
+                                                       "reference-backlinks.js",
+                                                       "tachyons.min.css"),
+                                     exclude_folder = "Master File Distribution Code") {
+
+  # Expand the path for destination directories
+  source_dir <- path.expand(source_dir)
+
+  # Get current directory where source files are located
+  source_files_dir <- getwd()
+
+  # Check which files exist
+  available_files <- files_to_copy[file.exists(file.path(source_files_dir, files_to_copy))]
+  missing_files <- setdiff(files_to_copy, available_files)
+
+  if (length(missing_files) > 0) {
+    cat("WARNING: These source files not found in", source_files_dir, ":\n")
+    cat(paste("  -", missing_files), sep = "\n")
+    cat("\nContinuing with available files...\n")
+  }
+
+  cat("\nFound", length(available_files), "files to copy\n\n")
+
+  # Get all subdirectories (non-recursive, excluding hidden)
+  subdirs <- list.dirs(source_dir, full.names = TRUE, recursive = FALSE)
+  subdirs <- subdirs[!grepl("/\\.", subdirs)]  # Exclude hidden directories
+
+  # Exclude the source folder itself and the special folder
+  all_destinations <- setdiff(subdirs, c(source_dir, file.path(source_dir, exclude_folder)))
+
+  # Counter for feedback
+  total_files_copied <- 0
+
+  # Copy files
+  for (dest_dir in all_destinations) {
+    cat("Copying to:", basename(dest_dir), "\n")
+    files_copied_to_dir <- 0
+
+    for (file in available_files) {
+      source_file <- file.path(source_files_dir, file)
+      dest_file <- file.path(dest_dir, file)
+
+      if (file.copy(source_file, dest_file, overwrite = TRUE)) {
+        files_copied_to_dir <- files_copied_to_dir + 1
+        total_files_copied <- total_files_copied + 1
+      }
+    }
+
+    cat(" - ", files_copied_to_dir, "files copied\n\n")
+  }
+
+  cat("Done! Total files copied:", total_files_copied, "\n")
+  cat("Excluded folder:", exclude_folder, "\n")
+
+  invisible(all_destinations)
+}
+
+# Run it
+distribute_project_files()
 
 ```
 

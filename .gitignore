@@ -1,5 +1,6 @@
-# Current as of: 2025-08-16
+# Current as of: 2025-08-17
 
+#####  NO INLINE COMMENTS!  #####
 
 # Bookdown files-if book rendered in cloud uncomment these
 /*.pdf
@@ -38,12 +39,18 @@ crc
 
 
 # Ignore R/knitr/Quarto cache directories
-*_cache/      # any folder ending with _cache
-*_cache/*     # everything inside those folders
-_cache/       # tools that use exactly _cache
-cache_data/   # your custom cache folder
-*_cache/html/ # html inside a cache folder
+*_cache/
+*_cache/**
+cache_data/
+cache_data/**
+*.Rhistory
+*.RData
+*.Rproj.user
+.Rproj.user/
 
+# Specific cache patterns
+**/*_cache/
+**/cache_data/
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
