@@ -9,7 +9,7 @@ format: html
 
 ## Usage Instructions
 
-1. **Place all source files** in your master directory: `/Users/D/R Working Directory/Master File Distribution Code`
+1. This function will also **place all source files** in your master directory: `/Users/D/R Working Directory/Master File Distribution Code`
 
 
 2. **Add date comments to source files** (run this function from the Utility section below):
@@ -189,7 +189,7 @@ list_project_directories()
 ```
 
 
-### Uncomment and update the date comment at top of each file (recommended)
+### Uncomment, change date in code, and run to update the date comment at top of each file (recommended)
 
 ```{r add-date-comments}
 
@@ -203,7 +203,7 @@ list_project_directories()
 #                                                    "r-colors.css",
 #                                                    "reference-backlinks.js",
 #                                                    "tachyons.min.css"),
-#                               date_string = "2025-08-16",
+#                               date_string = "2025-08-25",
 #                               source_dir = getwd()) {
 # 
 #   cat("Adding date comments to source files...\n\n")
@@ -264,7 +264,7 @@ list_project_directories()
 # 
 # 
 # # Specify the new date:
-# add_date_to_files(date_string = "2025-08-17")
+# add_date_to_files(date_string = "2025-08-25")
 
 ```
 
@@ -370,81 +370,78 @@ knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE)
 
 ```{r distribute-to-all}
 
-distribute_project_files <- function(source_dir = "~/R Working Directory",
-                                     files_to_copy = c(".gitattributes",
-                                                       ".gitignore",
-                                                       ".Rbuildignore",
-                                                       "swart.css",
-                                                       "xaringan-themer.css",
-                                                       "header.html",
-                                                       "r-colors.css",
-                                                       "reference-backlinks.js",
-                                                       "tachyons.min.css"),
-                                     exclude_folder = "Master File Distribution Code") {
-
-  # Expand the path for destination directories
-  source_dir <- path.expand(source_dir)
-
-  # Get current directory where source files are located
-  source_files_dir <- getwd()
-
-  # Check which files exist
-  available_files <- files_to_copy[file.exists(file.path(source_files_dir, files_to_copy))]
-  missing_files <- setdiff(files_to_copy, available_files)
-
-  if (length(missing_files) > 0) {
-    cat("WARNING: These source files not found in", source_files_dir, ":\n")
-    cat(paste("  -", missing_files), sep = "\n")
-    cat("\nContinuing with available files...\n")
-  }
-
-  cat("\nFound", length(available_files), "files to copy\n\n")
-
-  # Get all subdirectories (non-recursive, excluding hidden)
-  subdirs <- list.dirs(source_dir, full.names = TRUE, recursive = FALSE)
-  subdirs <- subdirs[!grepl("/\\.", subdirs)]  # Exclude hidden directories
-
-  # Exclude the source folder itself and the special folder
-  all_destinations <- setdiff(subdirs, c(source_dir, file.path(source_dir, exclude_folder)))
-
-  # Counter for feedback
-  total_files_copied <- 0
-
-  # Copy files
-  for (dest_dir in all_destinations) {
-    cat("Copying to:", basename(dest_dir), "\n")
-    files_copied_to_dir <- 0
-
-    for (file in available_files) {
-      source_file <- file.path(source_files_dir, file)
-      dest_file <- file.path(dest_dir, file)
-
-      if (file.copy(source_file, dest_file, overwrite = TRUE)) {
-        files_copied_to_dir <- files_copied_to_dir + 1
-        total_files_copied <- total_files_copied + 1
-      }
-    }
-
-    cat(" - ", files_copied_to_dir, "files copied\n\n")
-  }
-
-  cat("Done! Total files copied:", total_files_copied, "\n")
-  cat("Excluded folder:", exclude_folder, "\n")
-
-  invisible(all_destinations)
-}
-
-# Run it
-distribute_project_files()
-
-```
-
-
-
-```{r}
-
+# distribute_project_files <- function(source_dir = "~/R Working Directory",
+#                                      files_to_copy = c(".gitattributes",
+#                                                        ".gitignore",
+#                                                        ".Rbuildignore",
+#                                                        "swart.css",
+#                                                        "xaringan-themer.css",
+#                                                        "header.html",
+#                                                        "r-colors.css",
+#                                                        "reference-backlinks.js",
+#                                                        "tachyons.min.css"),
+#                                       exclude_folder = "Master File Distribution Code"
+#   )
+# 
+# {
+# 
+#   # Expand the path for destination directories
+#   source_dir <- path.expand(source_dir)
+# 
+#   # Get current directory where source files are located
+#   source_files_dir <- getwd()
+# 
+#   # Check which files exist
+#   available_files <- files_to_copy[file.exists(file.path(source_files_dir, files_to_copy))]
+#   missing_files <- setdiff(files_to_copy, available_files)
+# 
+#   if (length(missing_files) > 0) {
+#     cat("WARNING: These source files not found in", source_files_dir, ":\n")
+#     cat(paste("  -", missing_files), sep = "\n")
+#     cat("\nContinuing with available files...\n")
+#   }
+# 
+#   cat("\nFound", length(available_files), "files to copy\n\n")
+# 
+#   # Get all subdirectories (non-recursive, excluding hidden)
+#   subdirs <- list.dirs(source_dir, full.names = TRUE, recursive = FALSE)
+#   subdirs <- subdirs[!grepl("/\\.", subdirs)]  # Exclude hidden directories
+# 
+#   # Exclude the source folder itself and the special folder
+#   all_destinations <- setdiff(subdirs, c(source_dir, file.path(source_dir, exclude_folder)))
+# 
+#   # Counter for feedback
+#   total_files_copied <- 0
+# 
+#   # Copy files
+#   for (dest_dir in all_destinations) {
+#     cat("Copying to:", basename(dest_dir), "\n")
+#     files_copied_to_dir <- 0
+# 
+#     for (file in available_files) {
+#       source_file <- file.path(source_files_dir, file)
+#       dest_file <- file.path(dest_dir, file)
+# 
+#       if (file.copy(source_file, dest_file, overwrite = TRUE)) {
+#         files_copied_to_dir <- files_copied_to_dir + 1
+#         total_files_copied <- total_files_copied + 1
+#       }
+#     }
+# 
+#     cat(" - ", files_copied_to_dir, "files copied\n\n")
+#   }
+# 
+#   cat("Done! Total files copied:", total_files_copied, "\n")
+#   cat("Excluded folder:", exclude_folder, "\n")
+# 
+#   invisible(all_destinations)
+# }
+# 
+# # Run it
+# distribute_project_files()
 
 ```
+
 
 
 
@@ -453,173 +450,175 @@ distribute_project_files()
 
 ```{r distribute-specific}
 
-# Copy to selected projects
-distribute_to_specific <- function(project_names, 
-                                 source_dir = "~/R Working Directory",
-                                 files_to_copy = c(".gitattributes",
-                                                   ".gitignore",
-                                                   ".Rbuildignore",
-                                                   "swart.css",
-                                                   "xaringan-themer.css",
-                                                   "header.html", 
-                                                   "r-colors.css", 
-                                                   "reference-backlinks.js", 
-                                                   "tachyons.min.css"),
-                                 include_main_dir = TRUE) {
-  
-  # Expand destination directory path
-  source_dir <- path.expand(source_dir)
-  
-  # Get current directory where source files are located
-  source_files_dir <- getwd()
-  
-  # First check which source files exist
-  cat("Checking source files in:", source_files_dir, "\n\n")
-  missing_files <- c()
-  available_files <- c()
-  hidden_file_count <- 0
-  
-  for (file in files_to_copy) {
-    if (file.exists(file.path(source_files_dir, file))) {
-      available_files <- c(available_files, file)
-      if (substr(file, 1, 1) == ".") {
-        hidden_file_count <- hidden_file_count + 1
-      }
-    } else {
-      missing_files <- c(missing_files, file)
-    }
-  }
-  
-  if (length(missing_files) > 0) {
-    cat("WARNING: These source files not found:\n")
-    cat(paste("  -", missing_files), sep = "\n")
-    cat("\n")
-  }
-  
-  if (length(available_files) == 0) {
-    stop("No source files found to copy!")
-  }
-  
-  cat("Available files to copy:", length(available_files), 
-      "files (including", hidden_file_count, "hidden files)\n")
-  cat(paste("  +", available_files), sep = "\n")
-  cat("\n")
-  
-  # Add main R Working Directory if requested
-  if (include_main_dir) {
-    project_names <- c("R Working Directory", project_names)
-  }
-  
-  # Process each project
-  for (project in project_names) {
-    if (project == "R Working Directory") {
-      project_path <- source_dir
-    } else {
-      project_path <- file.path(source_dir, project)
-    }
-    
-    if (!dir.exists(project_path)) {
-      cat("✗ Skipping:", project, "(directory not found)\n")
-      next
-    }
-    
-    # Skip if it's a hidden directory
-    if (grepl("/\\.", project_path)) {
-      cat("✗ Skipping:", project, "(hidden directory - skipped for safety)\n")
-      next
-    }
-    
-    cat("→ Updating:", project, "\n")
-    
-    copied_count <- 0
-    for (file in available_files) {
-      source_file <- file.path(source_files_dir, file)
-      dest_file <- file.path(project_path, file)
-      
-      result <- file.copy(source_file, dest_file, overwrite = TRUE)
-      if (result) {
-        copied_count <- copied_count + 1
-        cat("  ✓", file, "\n")
-      } else {
-        cat("  ✗ Failed to copy:", file, "\n")
-      }
-    }
-    
-    cat("  Total:", copied_count, "files copied\n\n")
-  }
-}
-
-# Specify the project folders to be updated (includes main R Working Directory by default)
-distribute_to_specific(c("1-Projects in Process",
-                         "3 Faces of Performance Measurement",
-                         "3 Student Performance Distributions Shiny Demo",
-                         "AnalyzeR for Associations",
-                         "AnalyzeR for Systems",
-                         "Animations and Simulations",
-                         "Book Review-Data Science in Educ Using R",
-                         "DAGs",
-                         "Data Analysis - Generic Flexdashboard",
-                         "Data Analysis - SCUC Flexdashboard",
-                         "Draft Blog Topics",
-                         "DS Functions",
-                         "DS Packages",
-                         "DS Palette Chooser",
-                         "DS Website for Ed Research Comments",
-                         "dsflextemplates",
-                         "Educ Research Commentary Website",
-                         "Educ Research Reviews",
-                         "Exploring ANOM",
-                         "Exploring DAGs",
-                         "Exploring Diffs in Means",
-                         "Exploring Diffs in Variance in Groups",
-                         "Exploring US Census Data",
-                         "FINAL Plots & Scripts",
-                         "Honest Evaluation of Variables That Co-Vary",
-                         "Links to Published Works",
-                         "Master Files for Every Folder",
-                         "Master CSS Files",
-                         "Master Data Bank",
-                         "Master Data Cleaning Station",
-                         "Master Font Loading",
-                         "Master GIF Files",
-                         "Master GIT Files",
-                         "Master HTML Bank",
-                         "Master Image Bank",
-                         "Master Video Bank",
-                         "McElreath Causal Salad DAGs",
-                         "McElreath Rethinking with Tidyverse",
-                         "Palettes",
-                         "pipcalc-main",
-                         "Presentation Visuals",
-                         "presentr",
-                         "price-hikes-discounts-calculator-main",
-                         "Quarto Draft Posts",
-                         "Quarto Extensions",
-                         "Quarto Test Blog",
-                         "RMarkdown2Quarto",
-                         "SCUC Data Analysis DS Article",
-                         "SCUC Data Anaylsis",
-                         "Searching pdf Files for Causal Terms",
-                         "Maps with R - Sever",
-                         "price-hikes-discounts-calculator",
-                         "Quarto Test Blog",
-                         "Shiny Modules",
-                         "shinyapps.io Deployments",
-                         "Standalone Chart Code",
-                         "Standardized Project Files",
-                         "System Analysis Dashboard",
-                         "TidyCensus - Learning",
-                         "TidyCensus - SCUC",
-                         "TidyCensus - Sowell",
-                         "TX K-12 Legislation Analysis",
-                         "xaringanmediacalls",
-                         "xaringanskeletonbgblack",
-                         "xaringanskeletonbgdarkslategray",
-                         "yuzaR Tutorials"
-                         )
-                       )
-
-
+# # Copy to selected projects
+# distribute_to_specific <- function(project_names, 
+#                                  source_dir = "~/R Working Directory",
+#                                  files_to_copy = c(".gitattributes",
+#                                                    ".gitignore",
+#                                                    ".Rbuildignore",
+#                                                    "swart.css",
+#                                                    "xaringan-themer.css",
+#                                                    "header.html", 
+#                                                    "r-colors.css", 
+#                                                    "reference-backlinks.js", 
+#                                                    "tachyons.min.css"),
+#                                  include_main_dir = TRUE) {
+#   
+#   # Expand destination directory path
+#   source_dir <- path.expand(source_dir)
+#   
+#   # Get current directory where source files are located
+#   source_files_dir <- getwd()
+#   
+#   # First check which source files exist
+#   cat("Checking source files in:", source_files_dir, "\n\n")
+#   missing_files <- c()
+#   available_files <- c()
+#   hidden_file_count <- 0
+#   
+#   for (file in files_to_copy) {
+#     if (file.exists(file.path(source_files_dir, file))) {
+#       available_files <- c(available_files, file)
+#       if (substr(file, 1, 1) == ".") {
+#         hidden_file_count <- hidden_file_count + 1
+#       }
+#     } else {
+#       missing_files <- c(missing_files, file)
+#     }
+#   }
+#   
+#   if (length(missing_files) > 0) {
+#     cat("WARNING: These source files not found:\n")
+#     cat(paste("  -", missing_files), sep = "\n")
+#     cat("\n")
+#   }
+#   
+#   if (length(available_files) == 0) {
+#     stop("No source files found to copy!")
+#   }
+#   
+#   cat("Available files to copy:", length(available_files), 
+#       "files (including", hidden_file_count, "hidden files)\n")
+#   cat(paste("  +", available_files), sep = "\n")
+#   cat("\n")
+#   
+#   # Add main R Working Directory if requested
+#   if (include_main_dir) {
+#     project_names <- c("R Working Directory", project_names)
+#   }
+#   
+#   # Process each project
+#   for (project in project_names) {
+#     if (project == "R Working Directory") {
+#       project_path <- source_dir
+#     } else {
+#       project_path <- file.path(source_dir, project)
+#     }
+#     
+#     if (!dir.exists(project_path)) {
+#       cat("✗ Skipping:", project, "(directory not found)\n")
+#       next
+#     }
+#     
+#     # Skip if it's a hidden directory
+#     if (grepl("/\\.", project_path)) {
+#       cat("✗ Skipping:", project, "(hidden directory - skipped for safety)\n")
+#       next
+#     }
+#     
+#     cat("→ Updating:", project, "\n")
+#     
+#     copied_count <- 0
+#     for (file in available_files) {
+#       source_file <- file.path(source_files_dir, file)
+#       dest_file <- file.path(project_path, file)
+#       
+#       result <- file.copy(source_file, dest_file, overwrite = TRUE)
+#       if (result) {
+#         copied_count <- copied_count + 1
+#         cat("  ✓", file, "\n")
+#       } else {
+#         cat("  ✗ Failed to copy:", file, "\n")
+#       }
+#     }
+#     
+#     cat("  Total:", copied_count, "files copied\n\n")
+#   }
+# }
+# 
+# # Specify the project folders to be updated (includes main R Working Directory by default)
+# distribute_to_specific(c("1-Projects in Process",
+#                          "3 Faces of Performance Measurement",
+#                          "3 Student Performance Distributions Shiny Demo",
+#                          "AnalyzeR for Associations",
+#                          "AnalyzeR for Systems",
+#                          "Animations and Simulations",
+#                          "Book Review-Data Science in Educ Using R",
+#                          "DAGs",
+#                          "Data Analysis - Generic Flexdashboard",
+#                          "Data Analysis - SCUC Flexdashboard",
+#                          "Draft Blog Topics",
+#                          "DS Functions",
+#                          "DS Packages",
+#                          "DS Palette Chooser",
+#                          "DS Website for Ed Research Comments",
+#                          "dsflextemplates",
+#                          "Educ Research Commentary Website",
+#                          "Educ Research Reviews",
+#                          "Exploring ANOM",
+#                          "Exploring DAGs",
+#                          "Exploring Diffs in Means",
+#                          "Exploring Diffs in Variance in Groups",
+#                          "Exploring US Census Data",
+#                          "FINAL Plots & Scripts",
+#                          "Honest Evaluation of Variables That Co-Vary",
+#                          "htmlhelpers",
+#                          "htmlhelpers2",
+#                          "Links to Published Works",
+#                          "Master Files for Every Folder",
+#                          "Master CSS Files",
+#                          "Master Data Bank",
+#                          "Master Data Cleaning Station",
+#                          "Master Font Loading",
+#                          "Master GIF Files",
+#                          "Master GIT Files",
+#                          "Master HTML Bank",
+#                          "Master Image Bank",
+#                          "Master Video Bank",
+#                          "McElreath Causal Salad DAGs",
+#                          "McElreath Rethinking with Tidyverse",
+#                          "Palettes",
+#                          "pipcalc-main",
+#                          "Presentation Visuals",
+#                          "presentr",
+#                          "price-hikes-discounts-calculator-main",
+#                          "Quarto Draft Posts",
+#                          "Quarto Extensions",
+#                          "Quarto Test Blog",
+#                          "RMarkdown2Quarto",
+#                          "SCUC Data Analysis DS Article",
+#                          "SCUC Data Anaylsis",
+#                          "Searching pdf Files for Causal Terms",
+#                          "Maps with R - Sever",
+#                          "price-hikes-discounts-calculator",
+#                          "Quarto Test Blog",
+#                          "Shiny Modules",
+#                          "shinyapps.io Deployments",
+#                          "Standalone Chart Code",
+#                          "Standardized Project Files",
+#                          "System Analysis Dashboard",
+#                          "TidyCensus - Learning",
+#                          "TidyCensus - SCUC",
+#                          "TidyCensus - Sowell",
+#                          "TX K-12 Legislation Analysis",
+#                          "xaringanmediacalls",
+#                          "xaringanskeletonbgblack",
+#                          "xaringanskeletonbgdarkslategray",
+#                          "yuzaR Tutorials"
+#                          )
+#                        )
+# 
+#
 ## To exclude the main R Working Directory, use:
 # distribute_to_specific(c("Project1", "Project2"), include_main_dir = FALSE)
 
@@ -634,110 +633,110 @@ distribute_to_specific(c("1-Projects in Process",
 
 ```{r distribute-specific}
 
-# Setup
-knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE)
-
-
-# Copy to selected projects
-distribute_to_specific <- function(project_names, 
-                                 source_dir = "~/R Working Directory",
-                                 files_to_copy = c(".gitattributes",
-                                                   ".gitignore",
-                                                   ".Rbuildignore",
-                                                   "swart.css",
-                                                   "xaringan-themer.css",
-                                                   "header.html", 
-                                                   "r-colors.css", 
-                                                   "reference-backlinks.js", 
-                                                   "tachyons.min.css"),
-                                 include_main_dir = TRUE) {
-  
-  # Expand destination directory path
-  source_dir <- path.expand(source_dir)
-  
-  # Get current directory where source files are located
-  source_files_dir <- getwd()
-  
-  # First check which source files exist
-  cat("Checking source files in:", source_files_dir, "\n\n")
-  missing_files <- c()
-  available_files <- c()
-  hidden_file_count <- 0
-  
-  for (file in files_to_copy) {
-    if (file.exists(file.path(source_files_dir, file))) {
-      available_files <- c(available_files, file)
-      if (substr(file, 1, 1) == ".") {
-        hidden_file_count <- hidden_file_count + 1
-      }
-    } else {
-      missing_files <- c(missing_files, file)
-    }
-  }
-  
-  if (length(missing_files) > 0) {
-    cat("WARNING: These source files not found:\n")
-    cat(paste("  -", missing_files), sep = "\n")
-    cat("\n")
-  }
-  
-  if (length(available_files) == 0) {
-    stop("No source files found to copy!")
-  }
-  
-  cat("Available files to copy:", length(available_files), 
-      "files (including", hidden_file_count, "hidden files)\n")
-  cat(paste("  +", available_files), sep = "\n")
-  cat("\n")
-  
-  # Add main R Working Directory if requested
-  if (include_main_dir) {
-    project_names <- c("R Working Directory", project_names)
-  }
-  
-  # Process each project
-  for (project in project_names) {
-    if (project == "R Working Directory") {
-      project_path <- source_dir
-    } else {
-      project_path <- file.path(source_dir, project)
-    }
-    
-    if (!dir.exists(project_path)) {
-      cat("✗ Skipping:", project, "(directory not found)\n")
-      next
-    }
-    
-    # Skip if it's a hidden directory
-    if (grepl("/\\.", project_path)) {
-      cat("✗ Skipping:", project, "(hidden directory - skipped for safety)\n")
-      next
-    }
-    
-    cat("→ Updating:", project, "\n")
-    
-    copied_count <- 0
-    for (file in available_files) {
-      source_file <- file.path(source_files_dir, file)
-      dest_file <- file.path(project_path, file)
-      
-      result <- file.copy(source_file, dest_file, overwrite = TRUE)
-      if (result) {
-        copied_count <- copied_count + 1
-        cat("  ✓", file, "\n")
-      } else {
-        cat("  ✗ Failed to copy:", file, "\n")
-      }
-    }
-    
-    cat("  Total:", copied_count, "files copied\n\n")
-  }
-}
-
-
-
-## To exclude the main R Working Directory, use:
-distribute_to_specific(c("TidyCensus - Learning"), include_main_dir = FALSE)
+# # Setup
+# knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE)
+# 
+# 
+# # Copy to selected projects
+# distribute_to_specific <- function(project_names, 
+#                                  source_dir = "~/R Working Directory",
+#                                  files_to_copy = c(".gitattributes",
+#                                                    ".gitignore",
+#                                                    ".Rbuildignore",
+#                                                    "swart.css",
+#                                                    "xaringan-themer.css",
+#                                                    "header.html", 
+#                                                    "r-colors.css", 
+#                                                    "reference-backlinks.js", 
+#                                                    "tachyons.min.css"),
+#                                  include_main_dir = TRUE) {
+#   
+#   # Expand destination directory path
+#   source_dir <- path.expand(source_dir)
+#   
+#   # Get current directory where source files are located
+#   source_files_dir <- getwd()
+#   
+#   # First check which source files exist
+#   cat("Checking source files in:", source_files_dir, "\n\n")
+#   missing_files <- c()
+#   available_files <- c()
+#   hidden_file_count <- 0
+#   
+#   for (file in files_to_copy) {
+#     if (file.exists(file.path(source_files_dir, file))) {
+#       available_files <- c(available_files, file)
+#       if (substr(file, 1, 1) == ".") {
+#         hidden_file_count <- hidden_file_count + 1
+#       }
+#     } else {
+#       missing_files <- c(missing_files, file)
+#     }
+#   }
+#   
+#   if (length(missing_files) > 0) {
+#     cat("WARNING: These source files not found:\n")
+#     cat(paste("  -", missing_files), sep = "\n")
+#     cat("\n")
+#   }
+#   
+#   if (length(available_files) == 0) {
+#     stop("No source files found to copy!")
+#   }
+#   
+#   cat("Available files to copy:", length(available_files), 
+#       "files (including", hidden_file_count, "hidden files)\n")
+#   cat(paste("  +", available_files), sep = "\n")
+#   cat("\n")
+#   
+#   # Add main R Working Directory if requested
+#   if (include_main_dir) {
+#     project_names <- c("R Working Directory", project_names)
+#   }
+#   
+#   # Process each project
+#   for (project in project_names) {
+#     if (project == "R Working Directory") {
+#       project_path <- source_dir
+#     } else {
+#       project_path <- file.path(source_dir, project)
+#     }
+#     
+#     if (!dir.exists(project_path)) {
+#       cat("✗ Skipping:", project, "(directory not found)\n")
+#       next
+#     }
+#     
+#     # Skip if it's a hidden directory
+#     if (grepl("/\\.", project_path)) {
+#       cat("✗ Skipping:", project, "(hidden directory - skipped for safety)\n")
+#       next
+#     }
+#     
+#     cat("→ Updating:", project, "\n")
+#     
+#     copied_count <- 0
+#     for (file in available_files) {
+#       source_file <- file.path(source_files_dir, file)
+#       dest_file <- file.path(project_path, file)
+#       
+#       result <- file.copy(source_file, dest_file, overwrite = TRUE)
+#       if (result) {
+#         copied_count <- copied_count + 1
+#         cat("  ✓", file, "\n")
+#       } else {
+#         cat("  ✗ Failed to copy:", file, "\n")
+#       }
+#     }
+#     
+#     cat("  Total:", copied_count, "files copied\n\n")
+#   }
+# }
+# 
+# 
+# 
+# ## To exclude the main R Working Directory, use:
+# distribute_to_specific(c("TidyCensus - Learning"), include_main_dir = FALSE)
 
 ```
 

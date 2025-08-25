@@ -1,4 +1,4 @@
-# Current as of: 2025-08-17
+# Current as of: 2025-08-25
 
 #####  NO INLINE COMMENTS!  #####
 
@@ -46,11 +46,12 @@ cache_data/**
 *.Rhistory
 *.RData
 *.Rproj.user
-.Rproj.user/
+
 
 # Specific cache patterns
 **/*_cache/
 **/cache_data/
+
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
@@ -60,6 +61,7 @@ cache_data/**
 
 # pkgdown sites
 docs/
+/doc/
 
 # translation temp files
 po/*~
@@ -73,6 +75,7 @@ inst/doc
 
 # Package metadata
 Meta/
+/Meta/
 
 # R profile (local settings)
 .Rprofile
@@ -108,6 +111,7 @@ Rplots.pdf
 Thumbs.db
 
 # Quarto
+.quarto
 /.quarto/
 _freeze/
 
@@ -134,5 +138,6 @@ large_*.xlsx
 
 
 
-.Rproj.user
-.quarto
+
+
+

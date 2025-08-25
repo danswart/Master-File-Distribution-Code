@@ -1,4 +1,4 @@
-# Current as of: 2025-08-17
+# Current as of: 2025-08-25
 ^.*\.Rproj$      # RStudio project files
 ^\.Rproj\.user$  # RStudio user-specific settings
 ^LICENSE\.md$    # LICENSE.md (keeping only LICENSE for CRAN)
@@ -13,4 +13,12 @@
 ^revdep$         # Reverse dependency checks
 ^\.Rhistory$     # R history
 ^\.RData$        # R data files
+^htmlhelpers\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^doc$
+^Meta$
+^README\.Rmd$
+^\.DS_Store$
+^^\.*\\.Rproj$$
 
