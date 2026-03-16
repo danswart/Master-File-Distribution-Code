@@ -1,0 +1,374 @@
+---
+title: "Safe Master File Distribution Workflow"
+subtitle: "Source Selection First, Then Audit, Then Distribution"
+author: "Dan Swart"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-copy: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Purpose
+
+This guide is for the **distribution workflow only**.
+
+It is intentionally separate from the large-file audit workflow.
+
+The main idea is:
+
+1. find most recent candidates
+
+2. promote selected files to master
+
+3. audit
+
+4. dry run
+
+5. distribute
+
+6. verify all identical
+
+
+This makes the workflow safer because it does **not** assume the current master copy is always the best copy.
+
+## Which helper file this guide uses
+
+This guide uses a **new updated helper file**:
+
+`safe_master_file_distribution_helpers_v2.R`
+
+This is a replacement for the earlier helper because the new version adds a full **Step 1 source-selection stage**.
+
+So this guide and the new helper belong together.
+
+## This workflow is separate from the large-file audit workflow
+
+This workflow is **not** the same as the large-file audit workflow.
+
+The large-file audit workflow helps answer questions like:
+
+- Which `.csv`, `.xlsx`, and `.pdf` files are large?
+- Which files may cause GitHub problems?
+- Which repos have tracked large files?
+
+The distribution workflow answers a different question:
+
+- Which shared standard file should become the official source copy?
+- And how do I safely distribute that standard file afterward?
+
+Keep those two workflows separate.
+
+## Recommended folder arrangement
+
+A simple setup is:
+
+- `~/R Working Directory/Master File Distribution Code`
+    - stores your official standard files
+    - stores `safe_master_file_distribution_helpers_v2.R`
+    - stores this `.qmd` guide
+- `~/R Working Directory/<project folders>`
+    - contain evolving project-specific copies
+
+## Step 0: Source the helper file
+
+Use an explicit path.
+
+```{r}
+master_code_dir <- path.expand("~/R Working Directory/Master File Distribution Code")
+
+source(file.path(
+  master_code_dir,
+  "safe_master_file_distribution_helpers_v2.R"
+))
+```
+
+## Step 1: Inspect the default file set
+
+```{r}
+default_distribution_files("analysis")
+```
+
+Other built-in profiles:
+
+```{r}
+default_distribution_files("quarto_site")
+default_distribution_files("minimal")
+```
+
+## Step 2: Find the most recent candidate copy of each shared file
+
+```{r}
+scan <- find_most_recent_shared_files()
+```
+
+The object contains:
+
+- `scan$most_recent`
+- `scan$all_matches`
+
+The `most_recent` table shows the newest candidate file for each shared filename.
+
+```{r}
+scan$most_recent
+```
+
+The `all_matches` table shows every match that was found.
+
+```{r}
+scan$all_matches |> head(100)
+```
+
+## Why this step matters
+
+Without this step, the workflow assumes the file currently sitting in `Master File Distribution Code` is the correct source copy.
+
+That assumption can be wrong.
+
+If you have been modifying shared files inside individual project folders, the newest and best copy may live in one of those project folders rather than in the master folder.
+
+So the `find_most_recent_shared_files()` step gives you a better candidate source list before any audit or distribution happens.
+
+
+
+## Step 3: Save the most-recent scan to Excel
+
+```{r}
+most_recent_file <- write_most_recent_shared_files_excel(
+  scan,
+  output_dir = "."
+)
+
+most_recent_file
+```
+
+The workbook includes:
+
+- `most_recent`
+- `all_matches`
+
+## Important caution about "most recent"
+
+The most recent file is the best **candidate** source copy.
+
+It is **not automatic proof** that the file should become the official source.
+
+Sometimes the newest file may be:
+
+- a local experiment
+- a partial edit
+- a project-specific deviation
+- a file changed only cosmetically
+
+So you should review the `most_recent` sheet before promoting files into the master folder.
+
+
+## Step 4: Promote selected files into the master folder
+
+A dry run first:
+
+```{r}
+promotion_plan <- promote_files_to_master(
+  selected_paths = scan$most_recent$path,
+  dry_run = TRUE
+)
+
+promotion_plan
+```
+
+
+
+When satisfied, run the actual promotion:
+
+```{r eval=FALSE}
+promotion_result <- promote_files_to_master(
+  selected_paths = scan$most_recent$path,
+  dry_run = FALSE
+)
+```
+
+
+## Step 5: Audit the distribution conflicts
+
+```{r}
+audit <- audit_distribution_conflicts()
+audit |> head(20)
+```
+
+
+
+## Step 6: Summarize the audit
+
+```{r}
+summary <- summarize_distribution_audit(audit)
+summary
+```
+
+
+
+## Step 7: Save the distribution audit to Excel
+
+```{r}
+audit_file <- write_distribution_audit_excel(
+  audit,
+  summary = summary,
+  output_dir = "."
+)
+
+audit_file
+```
+
+
+
+## How to interpret the distribution statuses
+
+The main status column is `compare_status`.
+
+- `different_source_newer`: master source appears newer  
+
+- `identical`: source and destination match  
+
+- `missing_destination`: the destination file does not exist  
+
+- `missing_source`: the source file is missing from the master folder
+
+- `different_destination_newer`: destination appears newer  
+
+- `different_same_or_unknown_time`: files differ but timestamps do not clearly settle it  
+
+
+The most important warning state is:
+
+`different_destination_newer`
+
+It may mean the project has a newer local version that you do not want to overwrite automatically.
+
+
+
+
+## Step 8: Focus on the risky rows first
+
+```{r}
+audit |>
+  dplyr::filter(compare_status %in% c(
+    "different_destination_newer",
+    "different_same_or_unknown_time"
+  ))
+```
+
+Get status conditions report
+
+```{r}
+audit |>
+  dplyr::count(compare_status, recommended_action, sort = TRUE)
+```
+
+
+
+## Step 9: Dry run the distribution plan
+
+```{r}
+plan <- distribute_project_files_safe(dry_run = TRUE)
+```
+
+
+```{r}
+plan |>
+  dplyr::count(compare_status, will_copy, sort = TRUE)
+```
+
+
+Inspect the planned actions:
+
+```{r}
+plan |>
+  dplyr::select(
+    repo_name,
+    file_name,
+    compare_status,
+    recommended_action,
+    will_copy
+  ) |>
+  head(50)
+```
+
+
+
+## Step 10: Run the actual distribution
+
+Only after reviewing the audit and dry run:
+
+```{r eval=FALSE}
+result <- distribute_project_files_safe(dry_run = FALSE)
+```
+
+## Step 11: Verification
+
+The final verification step is a fresh distribution audit.  If the workflow completed successfully, the compare-status table should show only identical.
+
+
+### First verification
+
+```{r}
+audit_after <- audit_distribution_conflicts()
+
+all_identical <- audit_after |>
+  dplyr::summarise(all_identical = all(compare_status == "identical")) |>
+  dplyr::pull(all_identical)
+
+all_identical
+```
+
+
+### Second verification
+
+```{r}
+audit_after <- audit_distribution_conflicts()
+
+status_check <- audit_after |>
+  dplyr::count(compare_status, sort = TRUE)
+
+status_check
+
+all(status_check$compare_status == "identical")
+```
+
+
+
+
+
+Default protections are conservative:
+
+- `overwrite_mode = "if_source_newer"`
+- `protect_newer_destination = TRUE`
+- `backup_before_overwrite = TRUE`
+
+
+## Most important principle
+
+Do **not** think of this as:
+
+> push the master files everywhere
+
+Think of it as:
+
+> identify the best candidate source file, promote it into the master folder, audit the differences, then copy only when safe
+
+That is the whole reason this workflow is safer than a blind overwrite workflow.
+
+
+
+## Final recommendation
+
+This new workflow should replace the earlier distribution workflow.
+
+It adds the missing first step that you correctly identified:
+
+**find the most recent candidate source file first**
+
+Only after that should the master folder become the source of truth for distribution.

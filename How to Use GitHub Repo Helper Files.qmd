@@ -1,0 +1,25 @@
+---
+title: "How to Use GitHub Repo Folders Helper Files"
+format: html
+---
+
+
+```{r}
+
+master_code_dir <- path.expand("~/R Working Directory/Master File Distribution Code")
+
+
+source("~/R Working Directory/Master File Distribution Code/repo_file_audit_helpers_with_pdf_and_excel.R")
+
+report  <- repo_file_audit()
+summary <- summarize_repo_file_audit(report)
+actions <- flag_repo_file_actions(report)
+
+write_repo_file_audit_excel(
+  report,
+  summary = summary,
+  actions = actions,
+  output_dir = "~/R Working Directory/Master File Distribution Code"
+)
+
+```

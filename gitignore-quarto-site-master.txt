@@ -1,0 +1,139 @@
+# Current as of: 2026-03-15
+
+# R / RStudio
+.Rhistory
+.Rapp.history
+.RData
+.RDataTmp
+.Ruserdata
+.Rproj.user/
+*.Rproj.user
+*-Ex.R
+
+# Local settings / secrets
+.Renviron
+.Rprofile
+.httr-oauth
+.env
+.secrets/
+
+# Quarto / knitr / R Markdown caches
+.quarto/
+_freeze/
+*_files/
+*_cache/
+cache_data/
+**/*_cache/
+**/cache_data/
+*.utf8.md
+*.knit.md
+temp.Rmd
+
+# Rendered outputs usually NOT tracked
+*.pdf
+Rplots.pdf
+
+# Keep website outputs when desired
+# Use one publishing pattern or the other, depending on the repo
+
+# Pattern A: publish from docs/
+docs/
+!docs/
+!docs/index.html
+!docs/404.html
+!docs/*.html
+!docs/**/*.html
+!docs/site_libs/
+!docs/site_libs/**
+!docs/search.json
+!docs/*.xml
+!docs/*.txt
+!docs/**/*.css
+!docs/**/*.js
+!docs/**/*.png
+!docs/**/*.jpg
+!docs/**/*.jpeg
+!docs/**/*.svg
+!docs/**/*.gif
+!docs/**/*.woff
+!docs/**/*.woff2
+
+# Pattern B: publish from _site/
+_site/
+!_site/
+!_site/index.html
+!_site/404.html
+!_site/*.html
+!_site/**/*.html
+!_site/site_libs/
+!_site/site_libs/**
+!_site/search.json
+!_site/*.xml
+!_site/*.txt
+!_site/**/*.css
+!_site/**/*.js
+!_site/**/*.png
+!_site/**/*.jpg
+!_site/**/*.jpeg
+!_site/**/*.svg
+!_site/**/*.gif
+!_site/**/*.woff
+!_site/**/*.woff2
+
+# Keep selected standalone HTML fragments when needed
+!header.html
+!giscus.html
+!vignettes/*.html
+
+# Package build / check
+/*.tar.gz
+/*.Rcheck/
+/Meta/
+Meta/
+inst/doc/
+
+# Package management
+renv/
+packrat/
+
+# Logs
+*.log
+
+# Temporary / scratch
+*.tobedeleted
+crc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large local data folders
+data-raw/
+raw-data/
+data_raw/
+raw_data/
+data-clean/
+annual_budgets/
+
+# Large local files by naming convention
+large_*.rds
+large_*.RDS
+large_*.csv
+large_*.xlsx
+temp-*.rds
+temp-*.RDS
+
+# Optional local data rules
+# Uncomment only if these files should NOT go to GitHub
+# *.csv
+# *.xlsx
+
+# Optional figure handling
+# Ignore figures by default only if they are regenerated
+# figures/
+
+# Optional: keep figures when they are part of the published site
+# !figures/
+# !figures/*.png
+# !figures/*.svg
+# !figures/*.jpg
