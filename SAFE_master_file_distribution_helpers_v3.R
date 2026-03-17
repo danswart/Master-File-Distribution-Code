@@ -1,35 +1,12 @@
-# safe_master_file_distribution_helpers.R
+# safe_master_file_distribution_helpers_v2.R
 # Current as of: 2026-03-16
 #
-# Purpose:
-#   Audit and safely distribute shared "standard files" from a master folder to
-#   project folders under ~/R Working Directory without accidentally overwriting
-#   newer local versions.
-#
-# Core philosophy:
-#   1. Compare first
-#   2. Copy only when justified
-#   3. Protect newer destination files by default
-#   4. Optionally back up any file before replacement
-#
-# Main functions:
-#   - default_distribution_files()
-#   - list_project_directories_safe()
-#   - audit_distribution_conflicts()
-#   - summarize_distribution_audit()
-#   - write_distribution_audit_excel()
-#   - distribute_project_files_safe()
-#
-# Suggested workflow:
-#   master_code_dir <- path.expand("~/R Working Directory/Master File Distribution Code")
-#   source(master_code_dir |> file.path("safe_master_file_distribution_helpers.R"))
-#
-#   audit <- audit_distribution_conflicts()
-#   summary <- summarize_distribution_audit(audit)
-#   write_distribution_audit_excel(audit, summary = summary)
-#
-#   # Only after review:
-#   distribute_project_files_safe(dry_run = FALSE)
+# This is a replacement helper file for safe master-file distribution.
+# It adds:
+#   1. source-selection via most-recent file scan
+#   2. safe promotion into the master folder
+#   3. optional "Current as of" date-stamp updates during promotion
+#   4. audit / dry-run / distribution verification
 
 default_distribution_files <- function(profile = c("analysis", "quarto_site", "minimal")) {
   profile <- match.arg(profile)
@@ -48,7 +25,7 @@ default_distribution_files <- function(profile = c("analysis", "quarto_site", "m
 
   analysis_extra <- c(
     "repo_file_audit_helpers_with_pdf_and_excel.R",
-    "safe_master_file_distribution_helpers.R"
+    "safe_master_file_distribution_helpers_v2.R"
   )
 
   quarto_site_extra <- c(
@@ -135,6 +112,284 @@ list_project_directories_safe <- function(
     status == "different_same_or_unknown_time" ~ "Review: contents differ",
     TRUE ~ "Review"
   )
+}
+
+build_current_as_of_comment <- function(file_name, date_string = format(Sys.Date(), "%Y-%m-%d")) {
+  ext <- tolower(tools::file_ext(file_name))
+  file_base <- basename(file_name)
+
+  if (file_base %in% c(".gitattributes", ".gitignore", ".Rbuildignore")) {
+    return(paste0("# Current as of: ", date_string))
+  } else if (ext == "css") {
+    return(paste0("/* Current as of: ", date_string, " */"))
+  } else if (ext == "html") {
+    return(paste0("<!-- Current as of: ", date_string, " -->"))
+  } else if (ext == "js") {
+    return(paste0("// Current as of: ", date_string))
+  } else if (ext == "r") {
+    return(paste0("# Current as of: ", date_string))
+  } else {
+    return(NA_character_)
+  }
+}
+
+update_current_as_of_comment <- function(
+  file_path,
+  date_string = format(Sys.Date(), "%Y-%m-%d"),
+  verbose = FALSE
+) {
+  if (!file.exists(file_path)) {
+    return(list(success = FALSE, action = "Missing file", comment_line = NA_character_))
+  }
+
+  comment_line <- build_current_as_of_comment(basename(file_path), date_string = date_string)
+
+  if (is.na(comment_line)) {
+    return(list(success = FALSE, action = "Unsupported file type", comment_line = NA_character_))
+  }
+
+  content <- readLines(file_path, warn = FALSE)
+
+  if (length(content) == 0) {
+    content <- comment_line
+    action <- "Added date line to empty file"
+  } else if (grepl("Current as of:", content[1], fixed = TRUE)) {
+    content[1] <- comment_line
+    action <- "Updated existing date line"
+  } else {
+    content <- c(comment_line, content)
+    action <- "Prepended date line"
+  }
+
+  writeLines(content, file_path, useBytes = TRUE)
+
+  if (verbose) {
+    cat(action, "for", basename(file_path), "\n")
+  }
+
+  list(success = TRUE, action = action, comment_line = comment_line)
+}
+
+find_most_recent_shared_files <- function(
+  root_dir = "~/R Working Directory",
+  file_names = default_distribution_files("analysis"),
+  exclude_dirs = c("Master File Distribution Code"),
+  include_root = TRUE,
+  include_hidden_files = TRUE,
+  return_tibble = TRUE
+) {
+  root_dir <- normalizePath(path.expand(root_dir), winslash = "/", mustWork = TRUE)
+
+  destinations <- list_project_directories_safe(
+    root_dir = root_dir,
+    exclude_dirs = exclude_dirs,
+    include_root = include_root
+  )
+
+  if (!include_hidden_files) {
+    file_names <- file_names[substr(file_names, 1, 1) != "."]
+  }
+
+  rows <- vector("list", length(destinations) * length(file_names))
+  idx <- 1L
+
+  for (dest_dir in destinations) {
+    repo_name <- if (normalizePath(dest_dir, winslash = "/", mustWork = FALSE) == root_dir) {
+      "R Working Directory"
+    } else {
+      basename(dest_dir)
+    }
+
+    for (fname in file_names) {
+      fpath <- file.path(dest_dir, fname)
+
+      if (file.exists(fpath)) {
+        finfo <- file.info(fpath)
+
+        rows[[idx]] <- data.frame(
+          repo_name = repo_name,
+          file_name = fname,
+          path = normalizePath(fpath, winslash = "/", mustWork = FALSE),
+          size_bytes = as.numeric(finfo$size),
+          size_mb = round(as.numeric(finfo$size) / (1024^2), 4),
+          modified_time = finfo$mtime,
+          md5 = unname(tools::md5sum(fpath)),
+          stringsAsFactors = FALSE
+        )
+        idx <- idx + 1L
+      }
+    }
+  }
+
+  rows <- rows[seq_len(idx - 1L)]
+
+  if (length(rows) == 0) {
+    out <- data.frame(
+      repo_name = character(),
+      file_name = character(),
+      path = character(),
+      size_bytes = numeric(),
+      size_mb = numeric(),
+      modified_time = as.POSIXct(character()),
+      md5 = character(),
+      stringsAsFactors = FALSE
+    )
+    if (return_tibble && requireNamespace("tibble", quietly = TRUE)) {
+      out <- tibble::as_tibble(out)
+    }
+    return(list(all_matches = out, most_recent = out))
+  }
+
+  all_matches <- do.call(rbind, rows)
+
+  if (!requireNamespace("dplyr", quietly = TRUE)) {
+    stop("Please install dplyr to use find_most_recent_shared_files().")
+  }
+
+  most_recent <- dplyr::as_tibble(all_matches) |>
+    dplyr::arrange(file_name, dplyr::desc(modified_time), dplyr::desc(size_bytes)) |>
+    dplyr::group_by(file_name) |>
+    dplyr::slice(1) |>
+    dplyr::ungroup()
+
+  duplicate_newest <- dplyr::as_tibble(all_matches) |>
+    dplyr::group_by(file_name) |>
+    dplyr::mutate(max_time = max(modified_time, na.rm = TRUE)) |>
+    dplyr::filter(modified_time == max_time) |>
+    dplyr::summarise(n_at_latest_time = dplyr::n(), .groups = "drop")
+
+  most_recent <- dplyr::left_join(most_recent, duplicate_newest, by = "file_name")
+
+  if (return_tibble && requireNamespace("tibble", quietly = TRUE)) {
+    all_matches <- tibble::as_tibble(all_matches)
+  }
+
+  list(
+    all_matches = all_matches,
+    most_recent = most_recent
+  )
+}
+
+write_most_recent_shared_files_excel <- function(
+  scan_result,
+  output_dir = ".",
+  prefix = "most_recent_shared_files",
+  date_prefix = format(Sys.Date(), "%Y_%m_%d"),
+  freeze_panes = TRUE
+) {
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+    stop("Please install openxlsx to use write_most_recent_shared_files_excel().")
+  }
+
+  output_dir <- path.expand(output_dir)
+  if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
+
+  wb <- openxlsx::createWorkbook()
+
+  openxlsx::addWorksheet(wb, "most_recent")
+  openxlsx::writeDataTable(wb, "most_recent", scan_result$most_recent, withFilter = TRUE)
+  if (freeze_panes) openxlsx::freezePane(wb, "most_recent", firstRow = TRUE)
+  openxlsx::setColWidths(wb, "most_recent", cols = 1:ncol(scan_result$most_recent), widths = "auto")
+
+  openxlsx::addWorksheet(wb, "all_matches")
+  openxlsx::writeDataTable(wb, "all_matches", scan_result$all_matches, withFilter = TRUE)
+  if (freeze_panes) openxlsx::freezePane(wb, "all_matches", firstRow = TRUE)
+  openxlsx::setColWidths(wb, "all_matches", cols = 1:ncol(scan_result$all_matches), widths = "auto")
+
+  out_file <- file.path(output_dir, paste0(date_prefix, "_", prefix, ".xlsx"))
+  openxlsx::saveWorkbook(wb, out_file, overwrite = TRUE)
+  out_file
+}
+
+promote_files_to_master <- function(
+  selected_paths,
+  source_files_dir = "~/R Working Directory/Master File Distribution Code",
+  backup_existing = TRUE,
+  backup_suffix = format(Sys.time(), "%Y_%m_%d_%H%M%S"),
+  update_current_as_of = TRUE,
+  date_string = format(Sys.Date(), "%Y-%m-%d"),
+  dry_run = TRUE,
+  verbose = TRUE
+) {
+  source_files_dir <- path.expand(source_files_dir)
+  if (!dir.exists(source_files_dir)) dir.create(source_files_dir, recursive = TRUE)
+
+  selected_paths <- path.expand(selected_paths)
+
+  result <- data.frame(
+    selected_path = selected_paths,
+    file_name = basename(selected_paths),
+    master_path = file.path(source_files_dir, basename(selected_paths)),
+    exists_selected = file.exists(selected_paths),
+    exists_master = file.exists(file.path(source_files_dir, basename(selected_paths))),
+    backup_path = NA_character_,
+    date_stamp_action = NA_character_,
+    copy_result = NA_character_,
+    stringsAsFactors = FALSE
+  )
+
+  if (dry_run) {
+    result$copy_result <- ifelse(result$exists_selected, "Would copy", "Missing selected path")
+    if (update_current_as_of) {
+      result$date_stamp_action <- ifelse(
+        grepl("\\.(css|html|js|r)$", tolower(result$file_name)) |
+          result$file_name %in% c(".gitattributes", ".gitignore", ".Rbuildignore"),
+        paste0("Would update Current as of to ", date_string),
+        "No date-stamp update for this file type"
+      )
+    } else {
+      result$date_stamp_action <- "Date-stamp update disabled"
+    }
+    if (verbose) cat("Dry run only. No files promoted to master.\n")
+    return(result)
+  }
+
+  for (i in seq_len(nrow(result))) {
+    src <- result$selected_path[i]
+    dest <- result$master_path[i]
+
+    if (!file.exists(src)) {
+      result$copy_result[i] <- "Failed: selected path missing"
+      next
+    }
+
+    if (file.exists(dest) && backup_existing) {
+      backup_path <- paste0(dest, ".bak_", backup_suffix)
+      ok_backup <- file.copy(dest, backup_path, overwrite = FALSE, copy.mode = TRUE, copy.date = TRUE)
+      if (!ok_backup) {
+        result$copy_result[i] <- "Failed: could not back up existing master file"
+        next
+      }
+      result$backup_path[i] <- backup_path
+    }
+
+    ok_copy <- file.copy(src, dest, overwrite = TRUE, copy.mode = TRUE, copy.date = TRUE)
+    if (!ok_copy) {
+      result$copy_result[i] <- "Failed: copy unsuccessful"
+      next
+    }
+
+    if (update_current_as_of) {
+      stamp_result <- update_current_as_of_comment(
+        file_path = dest,
+        date_string = date_string,
+        verbose = FALSE
+      )
+      result$date_stamp_action[i] <- stamp_result$action
+    } else {
+      result$date_stamp_action[i] <- "Date-stamp update disabled"
+    }
+
+    result$copy_result[i] <- "Copied to master"
+  }
+
+  if (verbose) {
+    cat("Promotion to master complete.\n")
+    cat("Copied:", sum(result$copy_result == "Copied to master", na.rm = TRUE), "\n")
+    cat("Failed:", sum(grepl("^Failed", result$copy_result), na.rm = TRUE), "\n")
+  }
+
+  result
 }
 
 audit_distribution_conflicts <- function(
@@ -339,8 +594,7 @@ distribute_project_files_safe <- function(
     if (verbose) {
       cat("Dry run only. No files copied.\n")
       cat("Files marked for copy:", sum(audit$will_copy, na.rm = TRUE), "\n")
-      cat("Protected newer destination files:",
-          sum(audit$compare_status == "different_destination_newer", na.rm = TRUE), "\n")
+      cat("Protected newer destination files:", sum(audit$compare_status == "different_destination_newer", na.rm = TRUE), "\n")
     }
     return(audit)
   }
@@ -388,31 +642,34 @@ print_distribution_help <- function() {
   cat(
 "Suggested workflow:
 
-1. Audit first
+STEP 1. Find the most recent candidate source copy for each shared file
+   scan <- find_most_recent_shared_files()
+
+STEP 2. Save the scan to Excel and review it
+   write_most_recent_shared_files_excel(scan)
+
+STEP 3. Promote chosen files into Master File Distribution Code
+   promote_files_to_master(selected_paths = scan$most_recent$path, dry_run = TRUE)
+
+STEP 4. Audit distribution conflicts
    audit <- audit_distribution_conflicts()
 
-2. Summarize
+STEP 5. Save the distribution audit to Excel
    summary <- summarize_distribution_audit(audit)
-
-3. Save to Excel
    write_distribution_audit_excel(audit, summary = summary)
 
-4. Review any rows with:
-   - compare_status == 'different_destination_newer'
-   - compare_status == 'different_same_or_unknown_time'
-
-5. Dry run the copy plan
+STEP 6. Dry run the distribution plan
    distribute_project_files_safe(dry_run = TRUE)
 
-6. Copy only when ready
+STEP 7. Run actual distribution only when satisfied
    distribute_project_files_safe(dry_run = FALSE)
 
-Recommended defaults:
-- overwrite_mode = 'if_source_newer'
-- protect_newer_destination = TRUE
-- backup_before_overwrite = TRUE
+STEP 8. Final verification
+   audit_after <- audit_distribution_conflicts()
+   audit_after |> dplyr::count(compare_status, sort = TRUE)
 
-This setup is designed to avoid overwriting a newer local standard file with
-an older master copy.
-", sep = "")
+This helper is designed to reduce the risk that an outdated master file will overwrite a newer local standard file.
+",
+  sep = ""
+  )
 }
