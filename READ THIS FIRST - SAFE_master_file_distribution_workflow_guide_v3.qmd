@@ -31,11 +31,12 @@ The main idea is:
 
 This makes the workflow safer because it does **not** assume the current master copy is always the best copy.
 
+
 ## Which helper file this guide uses
 
 This guide uses:
 
-`safe_master_file_distribution_helpers_v2.R`
+`SAFE_master_file_distribution_helpers_v3.R`
 
 This version includes:
 - most-recent source scanning
@@ -43,22 +44,25 @@ This version includes:
 - optional `Current as of` date-stamp updating during promotion
 - audit / dry-run / distribution verification
 
+
 ## This workflow is separate from the large-file audit workflow
 
 This workflow is **not** the same as the large-file audit workflow.
 
 The large-file audit workflow helps answer questions like:
 
-- Which `.csv`, `.xlsx`, and `.pdf` files are large?
-- Which files may cause GitHub problems?
+- Which `.csv`, `.xlsx`, and `.pdf` files are so large they cause GitHub problems?
 - Which repos have tracked large files?
+
 
 The distribution workflow answers a different question:
 
-- Which shared standard file should become the official source copy?
+- Which shared standard files should become the official source copy?
 - And how do I safely distribute that standard file afterward?
 
 Keep those two workflows separate.
+
+
 
 ## Recommended folder arrangement
 
@@ -66,7 +70,7 @@ A simple setup is:
 
 - `~/R Working Directory/Master File Distribution Code`
     - stores your official standard files
-    - stores `safe_master_file_distribution_helpers_v2.R`
+    - stores `safe_master_file_distribution_helpers_v3.R`
     - stores this `.qmd` guide
 - `~/R Working Directory/<project folders>`
     - contain evolving project-specific copies
@@ -95,6 +99,7 @@ source(file.path(
 default_distribution_files("analysis")
 ```
 
+
 Other built-in profiles:
 
 ```{r}
@@ -104,13 +109,26 @@ default_distribution_files("minimal")
 
 
 
+
 ## Step 2: Find the most recent candidate copy of each shared file
+
+### Why this step matters
+
+Without this step, the workflow assumes the file currently sitting in `Master File Distribution Code` is the correct source copy.
+
+That assumption can be wrong.
+
+If you have been modifying shared files inside individual project folders, the newest and best copy may live in one of those project folders rather than in the master folder.
+
+So the `find_most_recent_shared_files()` step gives you a better candidate source list before any audit or distribution happens.
+
+
 
 ```{r}
 scan <- find_most_recent_shared_files()
 ```
 
-The object contains:
+The object named 'scan' contains:
 
 - `scan$most_recent`
 - `scan$all_matches`
@@ -128,16 +146,6 @@ scan$all_matches |> head(20)
 ```
 
 
-
-## Why this step matters
-
-Without this step, the workflow assumes the file currently sitting in `Master File Distribution Code` is the correct source copy.
-
-That assumption can be wrong.
-
-If you have been modifying shared files inside individual project folders, the newest and best copy may live in one of those project folders rather than in the master folder.
-
-So the `find_most_recent_shared_files()` step gives you a better candidate source list before any audit or distribution happens.
 
 
 
@@ -158,6 +166,8 @@ The workbook includes:
 - `all_matches`
 
 
+
+
 ## Important caution about "most recent"
 
 The most recent file is the best **candidate** source copy.
@@ -171,6 +181,7 @@ Sometimes the newest file may be:
 - a file changed only cosmetically
 
 So you should review the `most_recent` sheet before promoting files into the master folder.
+
 
 
 
@@ -225,6 +236,7 @@ The date-stamp update is applied only to supported file types, such as:
 
 
 
+
 ## Step 5: Audit the distribution conflicts
 
 ```{r}
@@ -234,12 +246,14 @@ audit |> head(20)
 
 
 
+
 ## Step 6: Summarize the audit
 
 ```{r}
 summary <- summarize_distribution_audit(audit)
 summary
 ```
+
 
 
 
@@ -254,6 +268,7 @@ audit_file <- write_distribution_audit_excel(
 
 audit_file
 ```
+
 
 
 
@@ -277,6 +292,7 @@ It may mean the project has a newer local version that you do not want to overwr
 
 
 
+
 ## Step 8: Focus on the risky rows first
 
 ```{r}
@@ -289,11 +305,13 @@ audit |>
 
 
 
+
 ## Step 9: Dry run the distribution plan
 
 ```{r}
 plan <- distribute_project_files_safe(dry_run = TRUE)
 ```
+
 
 Inspect the planned actions:
 
@@ -311,6 +329,7 @@ plan |>
 
 
 
+
 ## Step 10: Run the actual distribution
 
 Only after reviewing the audit and dry run:
@@ -319,11 +338,13 @@ Only after reviewing the audit and dry run:
 result <- distribute_project_files_safe(dry_run = FALSE)
 ```
 
+
 Default protections are conservative:
 
 - `overwrite_mode = "if_source_newer"`
 - `protect_newer_destination = TRUE`
 - `backup_before_overwrite = TRUE`
+
 
 
 
@@ -344,53 +365,7 @@ If the workflow completed cleanly, this final table should show only:
 
 
 
-# ## Recommended full workflow
-# 
-# ```{r eval=FALSE}
-# master_code_dir <- path.expand("~/R Working Directory/Master File Distribution Code")
-# 
-# source(file.path(
-#   master_code_dir,
-#   "safe_master_file_distribution_helpers_v2.R"
-# ))
-# 
-# scan <- find_most_recent_shared_files()
-# 
-# write_most_recent_shared_files_excel(
-#   scan,
-#   output_dir = "."
-# )
-# 
-# promotion_plan <- promote_files_to_master(
-#   selected_paths = scan$most_recent$path,
-#   dry_run = TRUE
-# )
-# 
-# # After review:
-# promotion_result <- promote_files_to_master(
-#   selected_paths = scan$most_recent$path,
-#   update_current_as_of = TRUE,
-#   date_string = format(Sys.Date(), "%Y-%m-%d"),
-#   dry_run = FALSE
-# )
-# 
-# audit <- audit_distribution_conflicts()
-# summary <- summarize_distribution_audit(audit)
-# 
-# write_distribution_audit_excel(
-#   audit,
-#   summary = summary,
-#   output_dir = "."
-# )
-# 
-# plan <- distribute_project_files_safe(dry_run = TRUE)
-# 
-# # After review:
-# result <- distribute_project_files_safe(dry_run = FALSE)
-# 
-# audit_after <- audit_distribution_conflicts()
-# audit_after |> dplyr::count(compare_status, sort = TRUE)
-```
+
 
 
 
@@ -405,6 +380,7 @@ Think of it as:
 > identify the best candidate source file, promote it into the master folder, optionally stamp the master copy with the current date, audit the differences, then copy only when safe
 
 That is the whole reason this workflow is safer than a blind overwrite workflow.
+
 
 
 ## Final recommendation

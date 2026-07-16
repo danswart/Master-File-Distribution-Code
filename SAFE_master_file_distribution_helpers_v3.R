@@ -7,6 +7,11 @@
 #   2. safe promotion into the master folder
 #   3. optional "Current as of" date-stamp updates during promotion
 #   4. audit / dry-run / distribution verification
+#
+# Note:
+#   The default distribution profiles now include only true common-use project
+#   files. Workflow helper .R files and guide .qmd files are intentionally kept
+#   in the master folder and are not pushed out to every project by default.
 
 default_distribution_files <- function(profile = c("analysis", "quarto_site", "minimal")) {
   profile <- match.arg(profile)
@@ -23,14 +28,9 @@ default_distribution_files <- function(profile = c("analysis", "quarto_site", "m
     "tachyons.min.css"
   )
 
-  analysis_extra <- c(
-    "repo_file_audit_helpers_with_pdf_and_excel.R",
-    "safe_master_file_distribution_helpers_v2.R"
-  )
+  analysis_extra <- character(0)
 
-  quarto_site_extra <- c(
-    "repo_file_audit_helpers_with_pdf_and_excel.R"
-  )
+  quarto_site_extra <- character(0)
 
   if (profile == "analysis") {
     unique(c(common, analysis_extra))

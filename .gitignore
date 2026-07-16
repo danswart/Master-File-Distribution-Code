@@ -1,6 +1,18 @@
-# Current as of: 2026-03-15
+# Current as of: 2026-07-15
 
 #####  NO INLINE COMMENTS!  #####
+
+# Project-specific large/local artifacts
+data/raw/
+data/derived/documents.csv
+data/derived/documents_with_text.csv
+data/derived/documents.rds
+data/derived/documents_with_text.rds
+cache/
+*.pdf
+
+# Optional: ignore all derived outputs
+# data/derived/
 
 
 # R / RStudio
@@ -67,6 +79,8 @@ crc
 # OS files
 .DS_Store
 Thumbs.db
+cache/
+cookies.txt
 
 # Common large local data folders
 data-raw/
@@ -105,3 +119,4 @@ docs/
 # !figures/
 # !figures/*.png
 # !figures/*.svg
+.positai
